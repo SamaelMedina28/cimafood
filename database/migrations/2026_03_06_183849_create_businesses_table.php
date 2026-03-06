@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->string('phone');
+            $table->string('logo');
+            $table->string('banner');
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->float('rating', 2)->max(5)->min(0)->default(0);
+            $table->time('open_time');
+            $table->time('close_time');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
