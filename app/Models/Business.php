@@ -28,4 +28,24 @@ class Business extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating');
+    }
+
+    public function totalReviews()
+    {
+        return $this->reviews()->count();
+    }
 }

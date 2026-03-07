@@ -70,4 +70,14 @@ class User extends Authenticatable
     public function businesses(){
         return $this->hasMany(Business::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
