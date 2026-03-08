@@ -9,60 +9,60 @@ use Illuminate\Support\Facades\Auth;
 
 class BusinessController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $businesses = Auth::user()->businesses();
-        return view('businesses.index', compact('businesses'));
-    }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $businesses = Auth::user()->businesses();
+    return view('businesses.index', compact('businesses'));
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    //
-    }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    return view('businesses.create');
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBusinessRequest $request)
-    {
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreBusinessRequest $request)
+  {
     //
-    }
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Business $business)
-    {
+  /**
+   * Display the specified resource.
+   */
+  public function show(Business $business)
+  {
     //
-    }
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Business $business)
-    {
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(Business $business)
+  {
     //
-    }
+  }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBusinessRequest $request, Business $business)
-    {
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateBusinessRequest $request, Business $business)
+  {
     //
-    }
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Business $business)
-    {
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(Business $business)
+  {
     //
-    }
+  }
 }

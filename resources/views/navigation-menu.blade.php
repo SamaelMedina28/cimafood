@@ -4,17 +4,17 @@
             'business' => [
                 'label' => 'Negocios',
                 'route' => 'business.index',
-                'active' => request()->routeIs('business.index'),
+                'active' => request()->routeIs('business*'),
             ],
             'products' => [
                 'label' => 'Productos',
                 'route' => 'product.index',
-                'active' => request()->routeIs('product.index'),
+                'active' => request()->routeIs('product*'),
             ],
             'orders' => [
                 'label' => 'Pedidos',
                 'route' => 'order.index',
-                'active' => request()->routeIs('order.index'),
+                'active' => request()->routeIs('order*'),
             ],
         ];
         $links = [
