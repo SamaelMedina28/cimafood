@@ -5,14 +5,25 @@
         </h2>
     </x-slot>
     <div>
-      <a href="{{ route('business.create')  }}">
-        <x-button>Crear</x-button>
-      </a>
-    </div>
-    <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex justify-end my-5">
+                <a href="{{ route('business.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-150">
+                    Agregar negocio
+                </a>
+            </div>
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                Negocios
+                @if ($businesses->count() === 0)
+                    <div class="p-6 text-gray-900">No hay negocios registrados.</div>
+                @else
+                    <div class="p-6 text-gray-900">
+                        <ul>
+                            @foreach ($businesses as $business)
+                                <li>{{ $business->name }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
