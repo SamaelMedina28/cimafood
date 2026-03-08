@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBusinessRequest;
 use App\Http\Requests\UpdateBusinessRequest;
 use App\Models\Business;
+use Illuminate\Support\Facades\Auth;
 
 class BusinessController extends Controller
 {
@@ -13,7 +14,8 @@ class BusinessController extends Controller
      */
     public function index()
     {
-        //
+        $businesses = Auth::user()->businesses();
+        return view('businesses.index', compact('businesses'));
     }
 
     /**
@@ -21,7 +23,7 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        //
+    //
     }
 
     /**
@@ -29,7 +31,7 @@ class BusinessController extends Controller
      */
     public function store(StoreBusinessRequest $request)
     {
-        //
+    //
     }
 
     /**
@@ -37,7 +39,7 @@ class BusinessController extends Controller
      */
     public function show(Business $business)
     {
-        //
+    //
     }
 
     /**
@@ -45,7 +47,7 @@ class BusinessController extends Controller
      */
     public function edit(Business $business)
     {
-        //
+    //
     }
 
     /**
@@ -53,7 +55,7 @@ class BusinessController extends Controller
      */
     public function update(UpdateBusinessRequest $request, Business $business)
     {
-        //
+    //
     }
 
     /**
@@ -61,6 +63,6 @@ class BusinessController extends Controller
      */
     public function destroy(Business $business)
     {
-        //
+    //
     }
 }

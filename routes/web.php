@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,16 +14,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    Route::get('/business/create', function () {
-        return "<h1 class='text-3xl font-bold underline'>hola</h1>";
-    })->name('business.create');
-
-    Route::get('/business', function () {
-        dd(auth()->user());
-        return "<h1 class='text-3xl font-bold underline'>hola</h1>";
-    })->name('business.index');
+    Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
+    Route::resource('business', BusinessController::class);
+    Route::resource('/product', ProductController::class);
+    Route::resource('/order', OrderController::class);
 });
