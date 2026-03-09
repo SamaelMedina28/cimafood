@@ -14,7 +14,7 @@ class BusinessController extends Controller
    */
   public function index()
   {
-    $businesses = Auth::user()->businesses();
+    $businesses = Auth::user()->businesses()->get();
     return view('businesses.index', compact('businesses'));
   }
 
