@@ -8,7 +8,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="flex justify-end my-5">
         <a href="{{ route('business.create') }}"
-          class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-150">
+          class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-full font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-150">
           Agregar negocio
 
         </a>
@@ -48,26 +48,26 @@
                     <div class="flex items-center justify-between">
                       <p
                         class="text-base font-semibold text-gray-900 truncate tracking-tight group-hover:text-green-700 transition-colors">
-                        {{ $business->name }}
-                      </p>
-                      <div class="flex items-center space-x-3">
                         @if (isset($business->status) && $business->status === 'active')
                           <span
                             class="inline-flex items-center px-1.5 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
-                            Activo
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                           </span>
                         @elseif(isset($business->status) && $business->status !== 'active')
                           <span
                             class="inline-flex items-center px-1.5 py-1.5 rounded-full text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"></span>
-                            Inactivo
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
                           </span>
                         @endif
+                        {{ $business->name }}
+                      </p>
+                      <div class="flex items-center space-x-3">
+
                         <div class="flex items-center gap-2">
                           {{-- Botón Ver --}}
-                          <a href="#"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white rounded-lg hover:bg-slate-100 hover:text-slate-900 hover:border-slate-200 transition-all duration-150">
+                          <a href="{{ route('business.show', $business) }}"
+                            wire:navigate
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white rounded-full hover:bg-slate-100 hover:text-slate-900 hover:border-slate-200 transition-all duration-150">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                               stroke-width="2">
                               <path stroke-linecap="round" stroke-linejoin="round"
@@ -80,7 +80,7 @@
 
                           {{-- Botón Editar --}}
                           <a href="#"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-yellow-500 rounded-lg shadow-sm hover:bg-yellow-600 active:bg-yellow-700 transition-all duration-150">
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 active:bg-yellow-700 transition-all duration-150">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                               stroke-width="2">
                               <path stroke-linecap="round" stroke-linejoin="round"
