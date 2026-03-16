@@ -80,7 +80,8 @@
                           </a>
 
                           {{-- Botón Editar --}}
-                          <a href="#"
+                          <a href="{{ route('business.edit', $business) }}"
+                            wire:navigate
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 active:bg-yellow-700 transition-all duration-150">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                               stroke-width="2">

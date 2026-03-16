@@ -21,7 +21,8 @@
         <!-- Banner Superior -->
         <div class="h-48 sm:h-64 w-full bg-gradient-to-r from-emerald-500 to-green-600 relative group">
           @if ($business->banner)
-            <img src="{{ asset('storage/' . $business->banner) }}" alt="Banner de {{ $business->name }}" class="w-full h-full object-cover">
+            <img src="{{ asset('storage/' . $business->banner) }}" alt="Banner de {{ $business->name }}"
+              class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors"></div>
           @endif
         </div>
@@ -29,16 +30,21 @@
         <!-- Cuerpo Central -->
         <div class="px-6 sm:px-10 pb-10">
           <!-- Cabecera superpuesta (Logo y Botones) -->
-          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-16 sm:-mt-20 mb-8 relative z-10 space-y-4 sm:space-y-0">
+          <div
+            class="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-16 sm:-mt-20 mb-8 relative z-10 space-y-4 sm:space-y-0">
 
             <!-- Contenedor Logo y Título Desktop -->
             <div class="flex items-end space-x-5">
-              <div class="flex-shrink-0 h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
+              <div
+                class="flex-shrink-0 h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
                 @if ($business->logo)
-                  <img src="{{ asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}" class="h-full w-full object-cover">
+                  <img src="{{ asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}"
+                    class="h-full w-full object-cover">
                 @else
-                  <div class="h-full w-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                    <span class="text-5xl font-bold text-gray-300">{{ strtoupper(substr($business->name, 0, 1)) }}</span>
+                  <div
+                    class="h-full w-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+                    <span
+                      class="text-5xl font-bold text-gray-300">{{ strtoupper(substr($business->name, 0, 1)) }}</span>
                   </div>
                 @endif
               </div>
@@ -48,12 +54,14 @@
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ $business->name }}</h1>
                 <div class="mt-2 flex items-center gap-3">
                   @if (isset($business->status) && $business->status === 'active')
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                       <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
                       Activo
                     </span>
                   @else
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
+                    <span
+                      class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
                       <span class="w-2 h-2 rounded-full bg-gray-400 mr-1.5"></span>
                       Inactivo
                     </span>
@@ -64,9 +72,11 @@
 
             <!-- Botón de Acción -->
             <div class="flex pb-2">
-              <a href="#" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-all">
+              <a href="{{ route('business.edit', $business) }}" wire:navigate
+                class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-all">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Editar Información
               </a>
@@ -78,12 +88,14 @@
             <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ $business->name }}</h1>
             <div class="mt-3 flex items-center gap-3">
               @if (isset($business->status) && $business->status === 'active')
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                   <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
                   Activo
                 </span>
               @else
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
+                <span
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
                   <span class="w-2 h-2 rounded-full bg-gray-400 mr-1.5"></span>
                   Inactivo
                 </span>
@@ -97,7 +109,8 @@
             <!-- Descripción Central -->
             <div class="lg:col-span-2 space-y-8">
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-100 pb-2">Acerca del Negocio</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-100 pb-2">Acerca del Negocio
+                </h3>
                 <p class="text-gray-600 leading-relaxed">
                   {{ $business->description ?? 'El propietario aún no ha proporcionado una descripción detallada para este negocio.' }}
                 </p>
@@ -114,7 +127,8 @@
                     <div class="flex-shrink-0 mt-0.5">
                       <div class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm">
                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
                       </div>
                     </div>
@@ -128,15 +142,17 @@
                     <div class="flex-shrink-0 mt-0.5">
                       <div class="p-2 bg-white rounded-lg border border-gray-100 shadow-sm">
                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                     </div>
                     <div class="ml-4">
                       <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Horario de Atención</p>
-                      @if($business->open_time && $business->close_time)
+                      @if ($business->open_time && $business->close_time)
                         <p class="text-sm font-medium text-gray-900 mt-1">
-                          {{ \Carbon\Carbon::parse($business->open_time)->format('h:i A') }} — {{ \Carbon\Carbon::parse($business->close_time)->format('h:i A') }}
+                          {{ \Carbon\Carbon::parse($business->open_time)->format('h:i A') }} —
+                          {{ \Carbon\Carbon::parse($business->close_time)->format('h:i A') }}
                         </p>
                       @else
                         <p class="text-sm font-medium text-gray-900 mt-1">Horarios no establecidos</p>
