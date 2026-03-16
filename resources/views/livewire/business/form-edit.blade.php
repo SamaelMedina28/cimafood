@@ -1,12 +1,16 @@
 <div class="space-y-6">
-    <form wire:submit="store" class="space-y-8">
+    <form wire:submit="update" class="space-y-8">
         <!-- Header Section: Banner & Logo -->
         <div class="relative">
             <!-- Banner -->
             <div
                 class="relative group h-48 md:h-64 w-full overflow-hidden rounded-t-xl bg-yellow-500 shadow-lg border border-gray-200">
-                @if ($business->banner)
-                    <img src="{{ $business->banner->temporaryUrl() }}" class="w-full h-full object-cover">
+                @if ($updateBusiness->banner)
+                    @if (is_string($updateBusiness->banner))
+                        <img src="{{ Storage::url($updateBusiness->banner) }}" class="w-full h-full object-cover">
+                    @else
+                        <img src="{{ $updateBusiness->banner->temporaryUrl() }}" class="w-full h-full object-cover">
+                    @endif
                 @else
                     <div class="w-full h-full flex items-center justify-center">
                         <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,10 +35,11 @@
                         <span class="text-sm font-medium">Cambiar Banner</span>
                     </div>
                 </label>
-                <input type="file" id="banner" wire:model="business.banner" class="hidden" accept="image/*" />
+                <input type="file" id="banner" wire:model="updateBusiness.banner" class="hidden"
+                    accept="image/*" />
 
                 <!-- Loading State for Banner -->
-                <div wire:loading wire:target="business.banner"
+                <div wire:loading wire:target="updateBusiness.banner"
                     class="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-sm">
                     <div class="flex items-center space-x-2 text-indigo-600">
                         <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -54,8 +59,13 @@
                 <div class="relative group">
                     <div
                         class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-                        @if ($business->logo)
-                            <img src="{{ $business->logo->temporaryUrl() }}" class="w-full h-full object-cover">
+                        @if ($updateBusiness->logo)
+                            @if (is_string($updateBusiness->logo))
+                                <img src="{{ Storage::url($updateBusiness->logo) }}" class="w-full h-full object-cover">
+                            @else
+                                <img src="{{ $updateBusiness->logo->temporaryUrl() }}"
+                                    class="w-full h-full object-cover">
+                            @endif
                         @else
                             <div
                                 class="w-full h-full flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-full">
@@ -79,10 +89,11 @@
                             </svg>
                         </label>
                     </div>
-                    <input type="file" id="logo" wire:model="business.logo" class="hidden" accept="image/*" />
+                    <input type="file" id="logo" wire:model="updateBusiness.logo" class="hidden"
+                        accept="image/*" />
 
                     <!-- Loading State for Logo -->
-                    <div wire:loading wire:target="business.logo"
+                    <div wire:loading wire:target="updateBusiness.logo"
                         class="absolute inset-0 rounded-full bg-white/60 flex items-center justify-center backdrop-blur-sm">
                         <svg class="animate-spin h-6 w-6 text-indigo-600" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -98,10 +109,10 @@
 
         <div class="pt-12 px-4 md:px-6">
             <!-- Validation Errors for Images -->
-            @error('business.logo')
+            @error('updateBusiness.logo')
                 <p class="text-sm text-red-600 text-center">{{ $message }}</p>
             @enderror
-            @error('business.banner')
+            @error('updateBusiness.banner')
                 <p class="text-sm text-red-600 text-center">{{ $message }}</p>
             @enderror
 
@@ -114,12 +125,22 @@
             <!-- Form Fields -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <!-- Name -->
-                <div class="md:col-span-2">
-                    <x-label for="name" value="Nombre del Negocio" class="text-gray-700 font-medium mb-1.5" />
-                    <x-input type="text" id="name" wire:model="business.name"
-                        placeholder="Ej: Restaurante El Sabor"
-                        class="w-full h-11 transition-all focus:ring-2 focus:ring-indigo-100" required />
-                    <x-input-error for="business.name" class="mt-1" />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 md:col-span-2">
+                    <div class="md:col-span-2">
+                        <x-label for="name" value="Nombre del Negocio" class="text-gray-700 font-medium mb-1.5" />
+                        <x-input type="text" id="name" wire:model="updateBusiness.name"
+                            placeholder="Ej: Restaurante El Sabor"
+                            class="w-full h-11 transition-all focus:ring-2 focus:ring-indigo-100" required />
+                    </div>
+                    <div>
+                        <x-label for="status" value="Estado del Negocio" class="text-gray-700 font-medium mb-1.5" />
+                        <select id="status" wire:model="updateBusiness.status"
+                            class="w-full h-11 transition-all border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm focus:ring-indigo-100">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                        </select>
+                        <x-input-error for="updateBusiness.status" class="mt-1" />
+                    </div>
                 </div>
 
                 <!-- Phone -->
@@ -134,39 +155,39 @@
                                 </path>
                             </svg>
                         </div>
-                        <x-input type="tel" id="phone" wire:model="business.phone"
+                        <x-input type="tel" id="phone" wire:model="updateBusiness.phone"
                             placeholder="+1 234 567 8900"
                             class="w-full h-11 pl-10 transition-all focus:ring-2 focus:ring-indigo-100" required />
                     </div>
-                    <x-input-error for="business.phone" class="mt-1" />
+                    <x-input-error for="updateBusiness.phone" class="mt-1" />
                 </div>
 
                 <!-- Hours Section -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <x-label for="open_time" value="Apertura" class="text-gray-700 font-medium mb-1.5" />
-                        <input type="time" id="open_time" wire:model="business.open_time"
+                        <input type="time" id="open_time" wire:model="updateBusiness.open_time"
                             class="w-full h-11 border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 rounded-lg shadow-sm"
                             required />
-                        <x-input-error for="business.open_time" class="mt-1" />
+                        <x-input-error for="updateBusiness.open_time" class="mt-1" />
                     </div>
                     <div>
                         <x-label for="close_time" value="Cierre" class="text-gray-700 font-medium mb-1.5" />
-                        <input type="time" id="close_time" wire:model="business.close_time"
+                        <input type="time" id="close_time" wire:model="updateBusiness.close_time"
                             class="w-full h-11 border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 rounded-lg shadow-sm"
                             required />
-                        <x-input-error for="business.close_time" class="mt-1" />
+                        <x-input-error for="updateBusiness.close_time" class="mt-1" />
                     </div>
                 </div>
 
                 <!-- Description -->
                 <div class="md:col-span-2">
                     <x-label for="description" value="Descripción" class="text-gray-700 font-medium mb-1.5" />
-                    <textarea id="description" wire:model="business.description"
+                    <textarea id="description" wire:model="updateBusiness.description"
                         placeholder="Cuéntanos sobre tu negocio, especialidades, etc..."
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 rounded-lg shadow-sm p-4 transition-all"
                         rows="4" required></textarea>
-                    <x-input-error for="business.description" class="mt-1" />
+                    <x-input-error for="updateBusiness.description" class="mt-1" />
                 </div>
             </div>
 
@@ -177,7 +198,7 @@
                     Cancelar
                 </a>
                 <x-button type="submit" wire:loading.attr="disabled">
-                    <span wire:loading.remove>Crear Negocio</span>
+                    <span wire:loading.remove>Actualizar Negocio</span>
                     <span wire:loading class="flex items-center">
                         <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"

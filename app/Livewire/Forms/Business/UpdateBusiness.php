@@ -9,33 +9,72 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateBusiness extends Form
 {
-  #[Validate('required|string|min:3|max:255')]
-  public $name;
-  #[Validate('required|string|min:3|max:255')]
-  public $description;
-  #[Validate('required|string|min:3|max:255')]
-  public $phone;
-  #[Validate('nullable|image|max:2048')]
-  public $logo;
-  #[Validate('nullable|image|max:2048')]
-  public $banner;
-  #[Validate('required|date_format:H:i')]
-  public $open_time = '08:00';
-  #[Validate('required|date_format:H:i')]
-  public $close_time = '18:00';
+    public $name;
+    public $description;
+    public $phone;
+    public $logo;
+    public $banner;
+    public $open_time = '08:00';
+    public $close_time = '18:00';
+    public $status;
 
-  public function store()
-  {
-    $this->validate();
-    $business = Business::create([
-      'name' => $this->name,
-      'description' => $this->description,
-      'phone' => $this->phone,
-      'logo' => $this->logo->store('business/logo', 'public'),
-      'banner' => $this->banner->store('business/banner', 'public'),
-      'open_time' => $this->open_time,
-      'close_time' => $this->close_time,
-      'user_id' => Auth::user()->id,
-    ]);
-  }
+
+    // Funciones de rules
+    public function rules()
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'phone' => 'required|string|max:255',
+            'open_time' => 'required|date_format:H:i',
+            'close_time' => 'required|date_format:H:i',
+            'status' => 'required|in:active,inactive',
+        ];
+
+        if (is_file($this->logo)) {
+            $rules['logo'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+        }
+
+        if (is_file($this->banner)) {
+            $rules['banner'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+        }
+
+        return $rules;
+    }
+
+    public function update(Business $business)
+    {
+        $this->validate();
+        $dataToUpdate = [
+            'name' => $this->name,
+            'description' => $this->description,
+            'phone' => $this->phone,
+            'open_time' => $this->open_time,
+            'close_time' => $this->close_time,
+            'status' => $this->status,
+            'user_id' => Auth::user()->id,
+        ];
+
+        if (is_file($this->logo)) {
+            $dataToUpdate['logo'] = $this->logo->store('business/logo', 'public');
+        }
+
+        if (is_file($this->banner)) {
+            $dataToUpdate['banner'] = $this->banner->store('business/banner', 'public');
+        }
+
+        $business->update($dataToUpdate);
+    }
+
+    public function setForm(Business $business)
+    {
+        $this->name = $business->name;
+        $this->description = $business->description;
+        $this->phone = $business->phone;
+        $this->logo = $business->logo;
+        $this->banner = $business->banner;
+        $this->open_time = $business->open_time;
+        $this->close_time = $business->close_time;
+        $this->status = $business->status;
+    }
 }
