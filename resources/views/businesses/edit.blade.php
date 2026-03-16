@@ -22,7 +22,7 @@
             Completa el formulario para editar tu negocio en el sistema.
           </p>
 
-          @livewire('business.form-create', ['business' => $business])
+          @livewire('business.form-edit', ['business' => $business])
         </div>
       </div>
     </div>
