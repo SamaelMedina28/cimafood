@@ -9,7 +9,7 @@
         Volver
       </a>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Crear nuevo negocio
+        Editar negocio: <i>{{ $business->name }}</i>
       </h2>
     </div>
   </x-slot>
@@ -19,10 +19,10 @@
       <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
         <div class="px-4 py-5 sm:p-6">
           <p class="mb-4 text-sm text-gray-600">
-            Completa el formulario para registrar un nuevo negocio en el sistema.
+            Completa el formulario para editar tu negocio en el sistema.
           </p>
 
-          @livewire('business.form-create')
+          @livewire('business.form-create', ['business' => $business])
         </div>
       </div>
     </div>
