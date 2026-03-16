@@ -173,7 +173,7 @@
             <!-- Action Buttons -->
             <div class="flex items-center justify-end space-x-4 pt-4">
                 <a href="{{ route('business.index') }}" wire:navigate
-                    class="px-6 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    class="px-6 py-2 rounded-full text-sm font-medium text-gray-600 bg-white border border-gray-300 hover:bg-gray-50 transition-colors">
                     Cancelar
                 </a>
                 <x-button type="submit" wire:loading.attr="disabled">
