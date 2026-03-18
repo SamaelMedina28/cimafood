@@ -15,9 +15,9 @@ class StoreBusiness extends Form
     public $description;
     #[Validate('required|string|min:3|max:255')]
     public $phone;
-    #[Validate('nullable|image|max:2048')]
+    #[Validate('required|image|max:2048')]
     public $logo;
-    #[Validate('nullable|image|max:2048')]
+    #[Validate('required|image|max:2048')]
     public $banner;
     #[Validate('required|date_format:H:i')]
     public $open_time = '08:00';

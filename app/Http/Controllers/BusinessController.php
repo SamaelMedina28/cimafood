@@ -6,16 +6,17 @@ use App\Http\Requests\StoreBusinessRequest;
 use App\Http\Requests\UpdateBusinessRequest;
 use App\Models\Business;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 
 class BusinessController extends Controller
 {
   /**
    * Display a listing of the resource.
    */
+  #[On('business-deleted')]
   public function index()
   {
-    $businesses = Auth::user()->businesses()->get();
-    return view('businesses.index', compact('businesses'));
+    return view('businesses.index');
   }
 
   /**
@@ -47,7 +48,7 @@ class BusinessController extends Controller
    */
   public function edit(Business $business)
   {
-    
+
     return view('businesses.edit', compact('business'));
   }
 
