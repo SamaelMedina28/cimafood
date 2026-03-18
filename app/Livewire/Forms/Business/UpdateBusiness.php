@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Forms\Business;
 
-use Livewire\Attributes\Validate;
-use Livewire\Form;
+use \Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use App\Models\Business;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Validate;
+use Livewire\Form;
 
 class UpdateBusiness extends Form
 {
@@ -31,11 +32,11 @@ class UpdateBusiness extends Form
             'status' => 'required|in:active,inactive',
         ];
 
-        if (is_file($this->logo)) {
+        if ($this->logo instanceof TemporaryUploadedFile) {
             $rules['logo'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
         }
 
-        if (is_file($this->banner)) {
+        if ($this->banner instanceof TemporaryUploadedFile) {
             $rules['banner'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
         }
 
@@ -55,11 +56,11 @@ class UpdateBusiness extends Form
             'user_id' => Auth::user()->id,
         ];
 
-        if (is_file($this->logo)) {
+        if ($this->logo instanceof TemporaryUploadedFile) {
             $dataToUpdate['logo'] = $this->logo->store('business/logo', 'public');
         }
 
-        if (is_file($this->banner)) {
+        if ($this->banner instanceof TemporaryUploadedFile) {
             $dataToUpdate['banner'] = $this->banner->store('business/banner', 'public');
         }
 
