@@ -5,7 +5,7 @@
       <!-- Banner -->
       <div
         class="relative group h-48 md:h-64 w-full overflow-hidden rounded-t-xl bg-yellow-500 shadow-lg border border-gray-200">
-        @if ($business->banner)
+        @if ($business->banner && str_starts_with($business->banner->getMimeType(), 'image/'))
           <img src="{{ $business->banner->temporaryUrl() }}" class="w-full h-full object-cover">
         @else
           <div class="w-full h-full flex items-center justify-center">
@@ -53,7 +53,7 @@
       <div class="absolute -bottom-16 inset-x-0 flex justify-center">
         <div class="relative group">
           <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-            @if ($business->logo)
+            @if ($business->logo && str_starts_with($business->logo->getMimeType(), 'image/'))
               <img src="{{ $business->logo->temporaryUrl() }}" class="w-full h-full object-cover">
             @else
               <div

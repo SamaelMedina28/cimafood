@@ -6,19 +6,23 @@
             <div
                 class="relative group h-48 md:h-64 w-full overflow-hidden rounded-t-xl bg-yellow-500 shadow-lg border border-gray-200">
                 @if ($updateBusiness->banner)
+                    {{-- Si es un String entonces es la imagen anterior --}}
                     @if (is_string($updateBusiness->banner))
                         <img src="{{ Storage::url($updateBusiness->banner) }}" class="w-full h-full object-cover">
-                    @else
+                    {{-- Si no es un String, es un archivo, verificamos si es una imagen --}}
+                    @elseif (str_starts_with($updateBusiness->banner->getMimeType(), 'image/'))
                         <img src="{{ $updateBusiness->banner->temporaryUrl() }}" class="w-full h-full object-cover">
+                    {{-- Si no es una imagen --}}
+                    @else
+                        <div class="w-full h-full flex items-center justify-center">
+                            <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
                     @endif
-                @else
-                    <div class="w-full h-full flex items-center justify-center">
-                        <svg class="w-16 h-16 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                    </div>
                 @endif
 
                 <!-- Banner Upload Overlay -->
@@ -127,13 +131,15 @@
                 <!-- Name -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 md:col-span-2">
                     <div class="md:col-span-2">
-                        <x-label for="name" value="Nombre del Negocio" class="text-gray-700 font-medium mb-1.5" />
+                        <x-label for="name" value="Nombre del Negocio"
+                            class="text-gray-700 font-medium mb-1.5" />
                         <x-input type="text" id="name" wire:model="updateBusiness.name"
                             placeholder="Ej: Restaurante El Sabor"
                             class="w-full h-11 transition-all focus:ring-2 focus:ring-indigo-100" required />
                     </div>
                     <div>
-                        <x-label for="status" value="Estado del Negocio" class="text-gray-700 font-medium mb-1.5" />
+                        <x-label for="status" value="Estado del Negocio"
+                            class="text-gray-700 font-medium mb-1.5" />
                         <select id="status" wire:model="updateBusiness.status"
                             class="w-full h-11 transition-all border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm focus:ring-indigo-100">
                             <option value="active">Activo</option>
