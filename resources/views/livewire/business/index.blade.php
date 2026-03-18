@@ -72,7 +72,7 @@
                                             </svg>
                                             Editar
                                         </a>
-                                        <x-danger-button class="ml-2" wire:click="$set('showModal', true)">
+                                        <x-danger-button wire:click="$set('showModal', true)">
                                             <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="white"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
