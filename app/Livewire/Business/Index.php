@@ -8,19 +8,27 @@ use Livewire\Component;
 class Index extends Component
 {
     public $businesses;
-    public $showModal = false;
+    public $isOpen = false;
+    public $businessIdToDelete;
 
     public function mount()
     {
         $this->businesses = Business::all();
     }
 
-    public function delete($id)
+    public function delete()
     {
-        $business = Business::findOrFail($id);
-        $business->delete();
-        $this->businesses = Business::all();
-        $this->showModal = false;
+        if ($this->businessIdToDelete) {
+            Business::findOrFail($this->businessIdToDelete)->delete();
+            $this->businesses = Business::all();
+            $this->businessIdToDelete = null;
+            $this->isOpen = false;
+        }
+    }
+    public function openModal($id)
+    {
+        $this->isOpen = true;
+        $this->businessIdToDelete = $id;
     }
 
     public function render()

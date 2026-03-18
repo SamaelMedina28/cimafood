@@ -72,7 +72,7 @@
                                             </svg>
                                             Editar
                                         </a>
-                                        <x-danger-button wire:click="$set('showModal', true)">
+                                        <x-danger-button wire:click="openModal({{ $business->id }})">
                                             <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="white"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -80,25 +80,6 @@
                                             </svg>
                                             Eliminar
                                         </x-danger-button>
-                                        @if ($showModal)
-                                            <x-dialog-modal>
-                                                <x-slot name="title">
-                                                    <h2 class="text-lg font-medium text-gray-900">Eliminar negocio</h2>
-                                                </x-slot>
-                                                <x-slot name="content">
-                                                    <p class="text-sm text-gray-500">¿Estás seguro de eliminar este
-                                                        negocio?</p>
-                                                </x-slot>
-                                                <x-slot name="footer">
-                                                    <x-secondary-button wire:click="$set('showModal', false)" class="mr-2">
-                                                        Cancelar
-                                                    </x-secondary-button>
-                                                    <x-danger-button wire:click="delete({{ $business->id }})">
-                                                        Eliminar
-                                                    </x-danger-button>
-                                                </x-slot>
-                                            </x-dialog-modal>
-                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -131,4 +112,21 @@
             @endforeach
         </ul>
     @endif
+    <x-dialog-modal wire:model="isOpen">
+        <x-slot name="title">
+            <h2 class="text-lg font-medium text-gray-900">Eliminar negocio</h2>
+        </x-slot>
+        <x-slot name="content">
+            <p class="text-sm text-gray-500">¿Estás seguro de eliminar este
+                negocio?</p>
+        </x-slot>
+        <x-slot name="footer">
+            <x-secondary-button wire:click="$set('isOpen', false)" class="mr-2">
+                Cancelar
+            </x-secondary-button>
+            <x-danger-button wire:click="delete">
+                Eliminar
+            </x-danger-button>
+        </x-slot>
+    </x-dialog-modal>
 </div>
