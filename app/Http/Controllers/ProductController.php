@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Product::query();
+
+        if ($request->has('business_id'))
+            $query->where('business_id', $request->business_id);
+
+        $products = $query->orderBy('name', 'desc')->paginate(10);
+
+        return view('products.index', compact('products'));
     }
 
     /**

@@ -13,7 +13,6 @@ class BusinessController extends Controller
   /**
    * Display a listing of the resource.
    */
-  #[On('business-deleted')]
   public function index()
   {
     return view('businesses.index');
