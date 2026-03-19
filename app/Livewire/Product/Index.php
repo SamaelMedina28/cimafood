@@ -6,10 +6,16 @@ use App\Models\Product;
 use App\Models\Business;
 use Livewire\Component;
 use Livewire\WithPagination;
+use PDO;
 
 class Index extends Component
 {
     use WithPagination;
+
+    public function paginationView()
+    {
+        return 'components.pagination';
+    }
 
     public $businessId = '';
     public $productName = '';

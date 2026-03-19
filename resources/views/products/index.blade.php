@@ -14,10 +14,8 @@
 
         </a>
       </div>
-      <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
         {{-- Componentes aqui --}}
         @livewire('product.index')
-      </div>
     </div>
   </div>
 </x-app-layout>
