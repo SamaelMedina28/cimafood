@@ -19,6 +19,23 @@ class Index extends Component
 
     public $businessId = '';
     public $productName = '';
+    public $isOpen = false;
+    public $productId;
+
+    public function openModal($id)
+    {
+        $this->isOpen = true;
+        $this->productId = $id;
+    }
+
+    public function delete()
+    {
+        if ($this->productId) {
+            Product::find($this->productId)?->delete();
+            $this->isOpen = false;
+            $this->reset('productId');
+        }
+    }
 
     public function updatingProductName()
     {
