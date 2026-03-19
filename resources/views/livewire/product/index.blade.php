@@ -15,7 +15,7 @@
                     </svg>
                 </span>
 
-                <x-input type="text" wire:model.debounce.400ms="productName" placeholder="Buscar producto..."
+                <x-input type="text" wire:model.live="productName" placeholder="Buscar producto..."
                     class="w-full pl-10 pr-4 py-2 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" />
             </div>
 
@@ -127,6 +127,7 @@
                     </li>
                 @endforeach
             </ul>
-        @endif
-    </div>
+            @endif
+        </div>
+        {{ $products->links() }}
 </div>
