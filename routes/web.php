@@ -17,7 +17,7 @@ Route::middleware([
   Route::get('/dashboard', function () {
     return view('dashboard');
   })->name('dashboard');
-  Route::resource('business', BusinessController::class);
+  Route::resource('/business', BusinessController::class);
   Route::resource('/product', ProductController::class);
   Route::resource('/order', OrderController::class);
 });
