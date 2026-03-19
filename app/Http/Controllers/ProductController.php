@@ -12,16 +12,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Product::query();
-
-        if ($request->has('business_id'))
-            $query->where('business_id', $request->business_id);
-
-        $products = $query->orderBy('name', 'desc')->paginate(10);
-
-        return view('products.index', compact('products'));
+        return view('products.index');
     }
 
     /**
@@ -29,15 +22,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProductRequest $request)
-    {
-        //
+        return view('products.create');
     }
 
     /**
@@ -45,7 +30,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return view('products.show', compact('product'));
     }
 
     /**
@@ -53,22 +38,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return view('products.edit', compact('product'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProductRequest $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-        //
-    }
 }
