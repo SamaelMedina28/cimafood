@@ -3,6 +3,7 @@
 namespace App\Livewire\Business;
 
 use App\Models\Business;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Index extends Component
@@ -13,14 +14,14 @@ class Index extends Component
 
     public function mount()
     {
-        $this->businesses = Business::all();
+        $this->businesses = Auth::user()->businesses;
     }
 
     public function delete()
     {
         if ($this->businessIdToDelete) {
             Business::findOrFail($this->businessIdToDelete)->delete();
-            $this->businesses = Business::all();
+            $this->businesses = Auth::user()->businesses;
             $this->businessIdToDelete = null;
             $this->isOpen = false;
         }

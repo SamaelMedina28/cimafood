@@ -4,6 +4,7 @@ namespace App\Livewire\Product;
 
 use App\Models\Product;
 use App\Models\Business;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use PDO;
@@ -50,11 +51,12 @@ class Index extends Component
     public function render()
     {
         $products = Product::with('business')
+            ->where('business_id', Auth::user()->businesses->pluck('id'))
             ->when($this->businessId, fn($q) => $q->where('business_id', $this->businessId))
             ->when($this->productName, fn($q) => $q->where('name', 'like', '%' . $this->productName . '%'))
             ->paginate(10);
 
-        $businesses = Business::all();
+        $businesses = Auth::user()->businesses;
 
         return view('livewire.product.index', compact('products', 'businesses'));
     }
