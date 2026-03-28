@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Samael Medina',
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
+            'is_vendor' => true,
         ]);
 
         $this->call([

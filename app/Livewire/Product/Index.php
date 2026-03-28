@@ -51,7 +51,7 @@ class Index extends Component
     public function render()
     {
         $products = Product::with('business')
-            ->where('business_id', Auth::user()->businesses->pluck('id'))
+            ->whereIn('business_id', Auth::user()->businesses->pluck('id'))
             ->when($this->businessId, fn($q) => $q->where('business_id', $this->businessId))
             ->when($this->productName, fn($q) => $q->where('name', 'like', '%' . $this->productName . '%'))
             ->paginate(10);

@@ -1,18 +1,22 @@
 <x-app-layout>
   <x-slot name="header">
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-      Productos
-    </h2>
+    <div class="flex items-center gap-2">
+      <a href="{{ route('product.index') }}" wire:navigate
+        class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 bg-white rounded-full">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Volver
+      </a>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">
+        {{ $product->name }}
+      </h2>
+    </div>
   </x-slot>
   <div>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="flex justify-end my-5">
-        <a href="{{ route('product.create') }}"
-          class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-full font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-150"
-          wire:navigate>
-          Agregar producto
 
-        </a>
       </div>
       <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
         {{-- Componentes aqui --}}
