@@ -54,6 +54,7 @@ class Index extends Component
             ->whereIn('business_id', Auth::user()->businesses->pluck('id'))
             ->when($this->businessId, fn($q) => $q->where('business_id', $this->businessId))
             ->when($this->productName, fn($q) => $q->where('name', 'like', '%' . $this->productName . '%'))
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         $businesses = Auth::user()->businesses;
