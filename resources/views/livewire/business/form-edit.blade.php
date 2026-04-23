@@ -8,7 +8,7 @@
                 @if ($updateBusiness->banner)
                     {{-- Si es un String entonces es la imagen anterior --}}
                     @if (is_string($updateBusiness->banner))
-                        <img src="{{ Storage::url($updateBusiness->banner) }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $updateBusiness->banner) }}" class="w-full h-full object-cover">
                     {{-- Si no es un String, es un archivo, verificamos si es una imagen --}}
                     @elseif (str_starts_with($updateBusiness->banner->getMimeType(), 'image/'))
                         <img src="{{ $updateBusiness->banner->temporaryUrl() }}" class="w-full h-full object-cover">
@@ -65,7 +65,8 @@
                         class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
                         @if ($updateBusiness->logo)
                             @if (is_string($updateBusiness->logo))
-                                <img src="{{ Storage::url($updateBusiness->logo) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/' . $updateBusiness->logo) }}"
+                                    class="w-full h-full object-cover">
                             @else
                                 <img src="{{ $updateBusiness->logo->temporaryUrl() }}"
                                     class="w-full h-full object-cover">

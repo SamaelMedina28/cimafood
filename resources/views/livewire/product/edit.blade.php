@@ -9,7 +9,7 @@
 
                     @if ($form->image_path)
                         @if (is_string($form->image_path))
-                            <img src="{{ Storage::url($form->image_path) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $form->image_path) }}" class="w-full h-full object-cover">
                         @elseif (str_starts_with($form->image_path->getMimeType(), 'image/'))
                             <img src="{{ $form->image_path->temporaryUrl() }}" class="w-full h-full object-cover">
                         @else
