@@ -1,27 +1,23 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     @php
-        $adminLinks = [
-            'business' => [
+        $links = [
+            'inicio' => [
+                'label' => 'Inicio',
+                'route' => 'store',
+                'active' => request()->routeIs('store*'),
+            ],
+            'favoritos' => [
                 'label' => 'Favoritos',
                 'route' => 'business.index',
                 'active' => request()->routeIs('business*'),
             ],
-            'orders' => [
+            'pedidos' => [
                 'label' => 'Mis pedidos',
                 'route' => 'order.index',
                 'active' => request()->routeIs('order*'),
             ],
         ];
-        $links = [
-            'dashboard' => [
-                'label' => 'Inicio',
-                'route' => 'dashboard',
-                'active' => request()->routeIs('dashboard'),
-            ],
-        ];
-        if (Auth::user()->is_vendor) {
-            $links = array_merge($links, $adminLinks);
-        }
+
     @endphp
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,12 +190,14 @@
                     {{ $link['label'] }}
                 </x-responsive-nav-link>
             @endforeach
-            <div class="mx-auto w-fit">
-                <a href="{{ url('/store') }}" wire:navigate
-                    class="inline-flex items-center px-5 py-2 my-2 bg-gradient-to-r from-green-500 to-emerald-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-green-600 hover:to-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
-                    Ir a la tienda
-                </a>
-            </div>
+            @if (Auth::user()->is_vendor == 1)
+                <div class="mx-auto w-fit">
+                    <a href="{{ url('/dashboard') }}" wire:navigate
+                        class="inline-flex items-center px-5 py-2 my-2 bg-gradient-to-r from-slate-500 to-slate-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-slate-600 hover:to-slate-700 active:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-300 ease-in-out hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
+                        Ir a gestion
+                    </a>
+                </div>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
