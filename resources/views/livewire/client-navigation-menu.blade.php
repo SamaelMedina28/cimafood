@@ -2,7 +2,7 @@
     @php
         $adminLinks = [
             'business' => [
-                'label' => 'Negocios',
+                'label' => 'Negoaaacios',
                 'route' => 'business.index',
                 'active' => request()->routeIs('business*'),
             ],
@@ -199,9 +199,9 @@
             @endforeach
             <div class="mx-auto w-fit">
                 <a href="{{ url('/store') }}" wire:navigate
-                class="inline-flex items-center px-5 py-2 my-2 bg-gradient-to-r from-green-500 to-emerald-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-green-600 hover:to-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
-                Ir a la tienda
-            </a>
+                    class="inline-flex items-center px-5 py-2 my-2 bg-gradient-to-r from-green-500 to-emerald-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-green-600 hover:to-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
+                    Ir a la tienda
+                </a>
             </div>
         </div>
 
