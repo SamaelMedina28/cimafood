@@ -14,8 +14,13 @@ Route::middleware([
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
+  //Si no es vendor redirigir a tienda
   Route::get('/dashboard', function () {
-    return view('dashboard');
+    if (Auth::user()->is_vendor) {
+      return view('dashboard');
+    } else {
+      return redirect()->route('store');
+    }
   })->name('dashboard');
 
   // Vistas de admin

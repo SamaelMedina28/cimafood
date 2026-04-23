@@ -2,24 +2,19 @@
     @php
         $adminLinks = [
             'business' => [
-                'label' => 'Negoaaacios',
+                'label' => 'Favoritos',
                 'route' => 'business.index',
                 'active' => request()->routeIs('business*'),
             ],
-            'products' => [
-                'label' => 'Productos',
-                'route' => 'product.index',
-                'active' => request()->routeIs('product*'),
-            ],
             'orders' => [
-                'label' => 'Pedidos',
+                'label' => 'Mis pedidos',
                 'route' => 'order.index',
                 'active' => request()->routeIs('order*'),
             ],
         ];
         $links = [
             'dashboard' => [
-                'label' => 'Panel',
+                'label' => 'Inicio',
                 'route' => 'dashboard',
                 'active' => request()->routeIs('dashboard'),
             ],
@@ -47,17 +42,19 @@
                         </x-nav-link>
                     @endforeach
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
-                    <!-- Botón hacia Tienda de Clientes -->
-                    <a href="{{ url('/store') }}" wire:navigate
-                        class="inline-flex items-center px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-green-600 hover:to-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                        </svg>
-                    </a>
-                </div>
+                @if (Auth::user()->is_vendor == 1)
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
+                        <!-- Botón hacia Tienda de Clientes -->
+                        <a href="{{ url('/store') }}" wire:navigate
+                            class="inline-flex items-center px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 border border-transparent rounded-full font-bold text-xs text-white uppercase tracking-widest hover:from-green-600 hover:to-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <!-- Settings Dropdown (Versión de escritorio) -->
