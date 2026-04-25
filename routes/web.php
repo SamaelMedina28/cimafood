@@ -35,6 +35,8 @@ Route::middleware([
     // TODO:ordenar negocios por calificacion
     $businesses = Business::limit(10)->get();
     $products = Product::all();
-    return view('client.dashboard', compact('businesses', 'products'));
+    $featuredProducts = Product::all();
+
+    return view('client.dashboard', compact('businesses', 'products', 'featuredProducts'));
   })->name('store');
 });
