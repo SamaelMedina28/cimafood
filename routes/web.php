@@ -32,11 +32,6 @@ Route::middleware([
 
   // Vistas de cliente
   Route::get('/store', function () {
-    // TODO:ordenar negocios por calificacion
-    $businesses = Business::limit(10)->get();
-    $products = Product::all();
-    $featuredProducts = Product::all();
-
-    return view('client.dashboard', compact('businesses', 'products', 'featuredProducts'));
+    return view('client.dashboard');
   })->name('store');
 });
