@@ -4,7 +4,8 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
-
+use App\Models\Business;
+use App\Models\Product;
 Route::get('/', function () {
   return view('welcome');
 });
@@ -31,6 +32,9 @@ Route::middleware([
 
   // Vistas de cliente
   Route::get('/store', function () {
-    return view('client.prueba');
+    // TODO:ordenar negocios por calificacion
+    $businesses = Business::limit(10)->get();
+    $products = Product::all();
+    return view('client.dashboard', compact('businesses', 'products'));
   })->name('store');
 });
