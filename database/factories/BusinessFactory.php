@@ -25,7 +25,7 @@ class BusinessFactory extends Factory
             'open_time' => $this->faker->time('H:i'),
             'close_time' => $this->faker->time('H:i'),
             'status' => $this->faker->randomElement(['active', 'inactive']),
-            'rating' => 0,
+            'rating' => rand(0, 5),
             'user_id' => 1,
         ];
     }
