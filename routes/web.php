@@ -4,8 +4,8 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Business;
-use App\Models\Product;
+use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
+
 Route::get('/', function () {
   return view('welcome');
 });
@@ -31,7 +31,11 @@ Route::middleware([
 
 
   // Vistas de cliente
-  Route::get('/store', function () {
-    return view('client.dashboard');
-  })->name('store');
+  // Conjunto de rutas con prefijo store
+  Route::prefix('store')->group(function () {
+    Route::get('/', function () {
+      return view('client.dashboard');
+    })->name('store');
+    Route::get('/business/{id}', [ClientBusinessController::class, 'show'])->name('store.business');
+  });
 });
