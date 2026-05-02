@@ -36,6 +36,6 @@ Route::middleware([
     Route::get('/', function () {
       return view('client.dashboard');
     })->name('store');
-    Route::get('/business/{id}', [ClientBusinessController::class, 'show'])->name('store.business');
+    Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
   });
 });
