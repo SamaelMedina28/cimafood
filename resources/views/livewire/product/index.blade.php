@@ -54,8 +54,8 @@
                 <ul class="divide-y divide-gray-100">
                     @foreach ($products as $product)
                         <li class="p-5 sm:p-6 hover:bg-gray-50/50 transition-colors duration-200 group">
-                            <div class="flex items-center space-x-5">
-                                <div class="flex-shrink-0">
+                            <div class="flex items-start sm:items-center space-x-4 sm:space-x-5">
+                                <div class="flex-shrink-0 mt-1 sm:mt-0">
                                     @if ($product->image_path)
                                         <img src="{{ asset('storage/' . $product->image_path) }}"
                                             alt="{{ $product->name }}"
@@ -73,7 +73,7 @@
                                     @endif
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                                         <p
                                             class="text-base font-semibold text-gray-900 truncate tracking-tight group-hover:text-green-700 transition-colors">
                                             @if (isset($product->status) && $product->status === 'available')
@@ -89,11 +89,11 @@
                                             @endif
                                             {{ $product->name }}
                                         </p>
-                                        <div class="flex items-center space-x-4">
+                                        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
                                             <div class="text-lg font-bold text-gray-900">
                                                 ${{ number_format($product->price, 2) }}
                                             </div>
-                                            <div class="flex items-center gap-2">
+                                            <div class="flex flex-wrap items-center gap-2">
                                                 {{-- Botón Ver --}}
                                                 <a href="{{ route('product.show', $product) }}" wire:navigate
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white rounded-full hover:bg-slate-100 hover:text-slate-900 hover:border-slate-200 transition-all duration-150">
