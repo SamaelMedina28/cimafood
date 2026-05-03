@@ -50,16 +50,22 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <div class="flex-grow text-center sm:text-left mt-2 sm:mt-0">
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">{{ $business->name }}</h1>
                     <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ $business->description ?? 'Sin descripción disponible.' }}</p>
                     <div class="flex items-center justify-center sm:justify-start gap-4 mt-3">
+                        {{--  Horario de Atención --}}
+                        @php
+                        // Sacar la hora actual
+                            $horaActual = date('H:i');
+                            $isOpen = $horaActual >= $business->open_time && $horaActual <= $business->close_time;
+                        @endphp
+                        <div class="text-sm font-medium text-gray-700 border px-3 py-1 rounded-full {{ $isOpen ? 'bg-green-100 border-green-400' : 'bg-red-100 border-red-400' }}">
+                            {{ $business->open_time }} - {{ $business->close_time }}
+                        </div>
                         <div class="flex items-center text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
                             <span class="text-yellow-500 mr-1">★</span> {{ number_format($business->averageRating() ?? 0, 1) }} ({{ $business->totalReviews() }}+)
-                        </div>
-                        <div class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
-                            {{ $business->status === 'active' ? 'Abierto' : 'Cerrado' }}
                         </div>
                     </div>
                 </div>
@@ -71,7 +77,7 @@
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span class="text-2xl">🍽️</span> Nuestro Menú
             </h2>
-            
+
             @if($business->products->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($business->products as $product)
@@ -84,7 +90,7 @@
                                     <div class="w-full h-full flex items-center justify-center text-3xl">🍲</div>
                                 @endif
                             </div>
-                            
+
                             {{-- Info del producto --}}
                             <div class="flex flex-col justify-between flex-grow">
                                 <div>
@@ -92,8 +98,8 @@
                                     <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ $product->description }}</p>
                                 </div>
                                 <div class="flex items-center justify-between mt-2">
-                                    <span class="text-lg font-extrabold text-emerald-600">${{ number_format($product->price, 2) }}</span>
-                                    <button @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}')" class="w-8 h-8 rounded-full bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95">
+                                    <span class="text-lg font-extrabold text-green-600">${{ number_format($product->price, 2) }}</span>
+                                    <button @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}')" class="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95">
                                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                                         </svg>
@@ -113,7 +119,7 @@
         </div>
 
         {{-- Floating Cart Bottom Bar (Optional, for easy access) --}}
-        <div x-show="totalItems > 0" 
+        <div x-show="totalItems > 0"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="translate-y-full opacity-0"
              x-transition:enter-end="translate-y-0 opacity-100"
@@ -131,7 +137,7 @@
         </div>
 
         {{-- Cart Drawer --}}
-        <div x-data="{ open: false }" @open-cart.window="open = true" class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-show="open">
+        <div x-data="{ open: false }" @open-cart.window="open = true" @close-cart.window="open = false" class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-show="open">
             <div x-show="open" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
@@ -203,7 +209,10 @@
                                         </div>
                                         <p class="mt-0.5 text-sm text-gray-500">Impuestos y envío calculados al procesar el pago.</p>
                                         <div class="mt-6">
-                                            <a href="#" @click.prevent="alert('Funcionalidad de pago pendiente de implementar.')" class="flex items-center justify-center rounded-xl border border-transparent bg-emerald-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors">Realizar pedido</a>
+                                            <button @click="checkout()" :disabled="isCheckingOut" class="w-full flex items-center justify-center rounded-xl border border-transparent bg-emerald-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <span x-show="!isCheckingOut">Realizar pedido</span>
+                                                <span x-show="isCheckingOut">Procesando...</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </template>
@@ -215,18 +224,18 @@
         </div>
     </div>
 
-    @push('scripts')
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('cartManager', (businessId) => ({
+        window.cartManager = function(businessId) {
+            return {
                 cart: [],
                 businessId: businessId,
                 storageKey: 'cimafood_cart',
-                
+                isCheckingOut: false,
+
                 get totalItems() {
                     return this.cart.reduce((sum, item) => sum + item.quantity, 0);
                 },
-                
+
                 get totalPrice() {
                     return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 },
@@ -236,13 +245,11 @@
                     if (storedCart) {
                         try {
                             let parsed = JSON.parse(storedCart);
-                            // Only load cart if it's for the same business, otherwise ask or clear
+                            // Solo se carga el carrito si es del mismo negocio, de lo contrario se borra o pregunta
                             if (parsed.businessId === this.businessId) {
                                 this.cart = parsed.items;
                             } else {
-                                // For now, we allow multiple businesses or just clear it. Let's make it single-business cart for simplicity
-                                // Or we just load it if they want to order from multiple. Let's just clear if it's a different business
-                                // Optional: We will clear it for now to enforce one order per business.
+                                // Borramos el carrito si es de otro negocio
                                 this.cart = [];
                                 localStorage.removeItem(this.storageKey);
                             }
@@ -252,7 +259,7 @@
                     }
                     this.updateBadge();
                 },
-                
+
                 saveCart() {
                     localStorage.setItem(this.storageKey, JSON.stringify({
                         businessId: this.businessId,
@@ -285,7 +292,7 @@
                     this.saveCart();
                     this.$dispatch('cart-updated');
                 },
-                
+
                 updateQuantity(index, quantity) {
                     if (quantity <= 0) {
                         this.removeFromCart(index);
@@ -302,9 +309,43 @@
                     if (this.cart.length === 0) {
                         // We could automatically close it here
                     }
+                },
+
+                async checkout() {
+                    if (this.cart.length === 0 || this.isCheckingOut) return;
+                    this.isCheckingOut = true;
+
+                    try {
+                        const response = await fetch('{{ route('store.checkout') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                business_id: this.businessId,
+                                items: this.cart.map(item => ({ id: item.id, quantity: item.quantity }))
+                            })
+                        });
+
+                        if (response.ok) {
+                            alert('¡Pedido realizado con éxito!');
+                            this.cart = [];
+                            this.saveCart();
+                            this.$dispatch('close-cart');
+                        } else {
+                            const errorData = await response.json();
+                            alert(errorData.error || 'Hubo un error al procesar el pedido. Intenta nuevamente.');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error de conexión. Intenta nuevamente.');
+                    } finally {
+                        this.isCheckingOut = false;
+                    }
                 }
-            }));
-        });
+            };
+        };
     </script>
-    @endpush
 </x-client-layout>
