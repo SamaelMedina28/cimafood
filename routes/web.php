@@ -4,7 +4,9 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -37,5 +39,6 @@ Route::middleware([
       return view('client.dashboard');
     })->name('store');
     Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
+    Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
   });
 });
