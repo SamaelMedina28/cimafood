@@ -4,12 +4,12 @@
             'inicio' => [
                 'label' => 'Inicio',
                 'route' => 'store',
-                'active' => request()->routeIs('store*'),
+                'active' => request()->routeIs('store'),
             ],
             'favoritos' => [
                 'label' => 'Favoritos',
-                'route' => 'business.index',
-                'active' => request()->routeIs('business*'),
+                'route' => 'store.favorites',
+                'active' => request()->routeIs('store.favorites*'),
             ],
             'pedidos' => [
                 'label' => 'Mis pedidos',
