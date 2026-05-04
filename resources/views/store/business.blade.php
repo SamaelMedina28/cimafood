@@ -1,7 +1,7 @@
 <x-client-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between w-full">
-            <a href="{{ route('store') }}" class="p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
+            <a href="{{ route('store') }}" wire:navigate class="p-2 rounded-full hover:bg-gray-100 transition-all duration-200">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>

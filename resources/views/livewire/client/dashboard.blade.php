@@ -28,7 +28,7 @@
         </div>
         <div class="flex overflow-x-auto gap-3 pb-2 px-1" style="scrollbar-width: none; -ms-overflow-style: none;">
             @foreach($businesses as $business)
-                <a href="{{ route('store.business', $business->id) }}" class="flex flex-col items-center flex-shrink-0 snap-center group" style="width: 72px;">
+                <a href="{{ route('store.business', $business->id) }}" wire:navigate class="flex flex-col items-center flex-shrink-0 snap-center group" style="width: 72px;">
                     <div
                         class="w-16 h-16 rounded-full overflow-hidden border border-gray-200 shadow-sm bg-white group-hover:shadow-md transition-shadow duration-200">
                         @if($business->logo)
