@@ -1,11 +1,11 @@
 <x-client-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between w-full">
-            <h1 class="text-lg font-bold text-gray-900 truncate px-4">Mis Favoritos</h1>
+        <div class="flex items-center justify-between w-full p-2">
+            <h1 class="text-lg font-bold text-gray-900 truncate">Mis Favoritos</h1>
         </div>
     </x-slot>
 
-    <div class="pb-24 bg-gray-50 min-h-screen px-4 py-6 max-w-5xl mx-auto">
+    <div class="pb-24 min-h-screen px-4 py-6 max-w-5xl mx-auto">
         <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <span class="text-2xl text-yellow-500">❤️</span> Platos Favoritos
         </h2>
@@ -33,12 +33,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center justify-between mt-1 pt-3 border-t border-gray-50">
                             <span class="text-lg font-extrabold text-green-600">${{ number_format($product->price, 2) }}</span>
                             <div class="flex items-center gap-2">
-                                <button 
-                                    x-data="{ 
+                                <button
+                                    x-data="{
                                         loading: false,
                                         toggle() {
                                             if (this.loading) return;
@@ -60,8 +60,8 @@
                                                 this.loading = false;
                                             });
                                         }
-                                    }" 
-                                    @click="toggle()" 
+                                    }"
+                                    @click="toggle()"
                                     class="w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-colors transform active:scale-95"
                                     :class="isFavorite ? 'bg-yellow-100 hover:bg-yellow-200 text-yellow-600' : 'bg-gray-100 hover:bg-gray-200 text-gray-400'"
                                     :disabled="loading"
