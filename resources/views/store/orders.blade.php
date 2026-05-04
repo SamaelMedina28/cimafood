@@ -55,9 +55,9 @@
 
                         @if($order->business)
                             <div class="mt-5 pt-4 border-t border-gray-50 flex justify-end">
-                                <a href="{{ route('store.business', $order->business->id) }}" wire:navigate class="px-5 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white font-semibold text-sm shadow-sm transition-colors transform active:scale-95 flex items-center gap-2">
+                                <a href="{{ route('store.business', $order->business->id) }}" wire:navigate class="px-4 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold text-sm shadow-sm transition-colors transform active:scale-95 flex items-center gap-1">
                                     Volver a pedir
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
                             </div>
                         @endif
