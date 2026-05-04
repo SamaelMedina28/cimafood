@@ -7,6 +7,12 @@ use App\Models\Product;
 
 class FavoriteController extends Controller
 {
+    public function index()
+    {
+        $favorites = auth()->user()->favorites()->with('business')->get();
+        return view('store.favorites', compact('favorites'));
+    }
+
     public function toggle(Product $product)
     {
         $user = auth()->user();
