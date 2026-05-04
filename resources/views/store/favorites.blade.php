@@ -7,7 +7,9 @@
 
     <div class="pb-24 min-h-screen px-4 py-6 max-w-5xl mx-auto">
         <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="text-2xl text-yellow-500">❤️</span> Platos Favoritos
+            <span class="text-2xl text-yellow-500"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg></span> Platos Favoritos
         </h2>
 
         @if($favorites->count() > 0)
@@ -71,7 +73,7 @@
                                     </svg>
                                 </button>
                                 @if($product->business)
-                                    <a href="{{ route('store.business', $product->business->id) }}" wire:navigate class="px-4 py-1.5 rounded-full bg-green-500 hover:bg-green-600 text-white font-semibold text-sm shadow-sm transition-colors transform active:scale-95 flex items-center gap-1">
+                                    <a href="{{ route('store.business', $product->business->id) }}" wire:navigate class="px-4 py-1.5 rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold text-sm shadow-sm transition-colors transform active:scale-95 flex items-center gap-1">
                                         Ver tienda
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </a>
@@ -83,11 +85,18 @@
             </div>
         @else
             <div class="bg-white rounded-2xl p-8 text-center border border-gray-100 border-dashed mt-8 max-w-md mx-auto">
-                <div class="text-6xl mb-4 opacity-75">💔</div>
+                <div class="mx-auto flex justify-center mb-4 text-gray-300">
+                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
                 <h3 class="text-xl font-bold text-gray-800">Aún no tienes favoritos</h3>
-                <p class="text-sm text-gray-500 mt-2">Explora las tiendas y presiona el corazón en los platillos que más te gusten para guardarlos aquí.</p>
-                <a href="{{ route('store') }}" wire:navigate class="inline-block mt-6 px-8 py-3 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transition-colors shadow-md hover:shadow-lg transform active:scale-95">
-                    Explorar comida
+                <p class="text-md text-gray-500 mt-2">Explora las tiendas y presiona el corazón en los platillos que más te gusten para guardarlos aquí.</p>
+                <a href="{{ route('store') }}" wire:navigate class="inline-flex items-center mt-4 px-6 py-2 bg-green-700 border border-green-700 rounded-full font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:green-400 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Explorar comida
+                    </div>
                 </a>
             </div>
         @endif
