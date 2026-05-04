@@ -43,5 +43,6 @@ Route::middleware([
     Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
     Route::get('/favorites', [ClientFavoriteController::class, 'index'])->name('store.favorites');
     Route::post('/favorites/toggle/{product}', [ClientFavoriteController::class, 'toggle'])->name('store.favorites.toggle');
+    Route::get('/orders', [ClientOrderController::class, 'index'])->name('store.orders');
   });
 });

@@ -13,8 +13,8 @@
             ],
             'pedidos' => [
                 'label' => 'Mis pedidos',
-                'route' => 'order.index',
-                'active' => request()->routeIs('order*'),
+                'route' => 'store.orders',
+                'active' => request()->routeIs('store.orders*'),
             ],
         ];
 
