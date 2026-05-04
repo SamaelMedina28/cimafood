@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $orders = Auth::user()->orders()
+            ->with(['business', 'products'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('store.orders', compact('orders'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
