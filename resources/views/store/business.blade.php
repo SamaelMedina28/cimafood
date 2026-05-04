@@ -99,11 +99,46 @@
                                 </div>
                                 <div class="flex items-center justify-between mt-2">
                                     <span class="text-lg font-extrabold text-green-600">${{ number_format($product->price, 2) }}</span>
-                                    <button @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}')" class="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button
+                                            x-data="{
+                                                isFavorite: {{ in_array($product->id, $favorites) ? 'true' : 'false' }},
+                                                loading: false,
+                                                toggle() {
+                                                    if (this.loading) return;
+                                                    this.loading = true;
+                                                    fetch('{{ route('store.favorites.toggle', $product->id) }}', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                            'Accept': 'application/json'
+                                                        }
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        this.isFavorite = data.isFavorite;
+                                                    })
+                                                    .catch(err => console.error(err))
+                                                    .finally(() => {
+                                                        this.loading = false;
+                                                    });
+                                                }
+                                            }"
+                                            @click="toggle()"
+                                            class="w-8 h-8 rounded-full bg-yellow-100 hover:bg-yellow-200 text-yellow-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95"
+                                            :class="{ 'opacity-50 cursor-not-allowed': loading }"
+                                        >
+                                            <svg class="w-5 h-5 transition-transform duration-200" :class="{ 'scale-110': isFavorite }" :fill="isFavorite ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        </button>
+                                        <button @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}')" class="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

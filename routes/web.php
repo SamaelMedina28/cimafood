@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\FavoriteController as ClientFavoriteController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -40,5 +41,6 @@ Route::middleware([
     })->name('store');
     Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
     Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
+    Route::post('/favorites/toggle/{product}', [ClientFavoriteController::class, 'toggle'])->name('store.favorites.toggle');
   });
 });

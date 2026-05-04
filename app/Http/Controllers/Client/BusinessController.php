@@ -9,6 +9,8 @@ class BusinessController extends Controller
 {
     public function show(Business $business)
     {
-        return view('store.business', compact('business'));
+        $business->load('products');
+        $favorites = auth()->check() ? auth()->user()->favorites()->pluck('products.id')->toArray() : [];
+        return view('store.business', compact('business', 'favorites'));
     }
 }
