@@ -20,29 +20,27 @@ Route::middleware([
 ])->group(function () {
   //Si no es vendor redirigir a tienda
   Route::get('/dashboard', function () {
-    if (Auth::user()->is_vendor) {
-      return view('dashboard');
-    } else {
-      return redirect()->route('store');
-    }
+    return Auth::user()->is_vendor ? view('dashboard') : redirect()->route('store');
   })->name('dashboard');
 
-  // Vistas de admin
+  // Admin
   Route::resource('/business', BusinessController::class);
   Route::resource('/product', ProductController::class);
   Route::resource('/order', OrderController::class);
 
-
-  // Vistas de cliente
-  // Conjunto de rutas con prefijo store
+  // Cliente
   Route::prefix('store')->group(function () {
     Route::get('/', function () {
-      return view('client.dashboard');
+      return view('store.dashboard');
     })->name('store');
+    //Negocios
     Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
-    Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
+
+    //Favoritos
     Route::get('/favorites', [ClientFavoriteController::class, 'index'])->name('store.favorites');
     Route::post('/favorites/toggle/{product}', [ClientFavoriteController::class, 'toggle'])->name('store.favorites.toggle');
+    //Pedidos
+    Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
     Route::get('/orders', [ClientOrderController::class, 'index'])->name('store.orders');
   });
 });
