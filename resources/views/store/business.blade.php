@@ -7,24 +7,52 @@
                 </svg>
             </a>
             <h1 class="text-lg font-bold text-gray-900 truncate px-4">{{ $business->name }}</h1>
-            <div x-data="{ showCartInfo: false }" @cart-updated.window="showCartInfo = true; setTimeout(() => showCartInfo = false, 2000)" class="relative">
-                <button @click="$dispatch('open-cart')" class="p-2 rounded-full hover:bg-gray-100 transition-all duration-200 relative">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-4H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            {{-- Botón de carrito con badge reactivo + toast al agregar --}}
+            <button
+                class="relative p-2 rounded-full hover:bg-gray-100 transition-all duration-200"
+                x-data="{
+                    count: 0,
+                    added: false,
+                    init() {
+                        try {
+                            let c = JSON.parse(localStorage.getItem('cimafood_global_cart') || '[]');
+                            this.count = c.reduce((s, i) => s + i.quantity, 0);
+                        } catch(e) {}
+                        window.addEventListener('cart-count-updated', e => this.count = e.detail.count);
+                        window.addEventListener('add-to-cart', () => {
+                            this.added = true;
+                            setTimeout(() => this.added = false, 2000);
+                        });
+                    }
+                }"
+                x-init="init()"
+                @click="window.dispatchEvent(new CustomEvent('open-cart'))"
+            >
+                {{-- Ícono del carrito, se convierte en check brevemente al agregar --}}
+                <div x-show="!added" class="text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-4H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <!-- Cart Badge -->
-                    <span id="cart-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full" style="display: none;">
-                        0
-                    </span>
-                </button>
-                <div x-show="showCartInfo" x-transition class="absolute right-0 mt-2 w-48 bg-emerald-600 text-white text-sm rounded-lg py-2 px-3 shadow-lg z-50 text-center">
-                    Producto agregado
                 </div>
-            </div>
+                <div x-show="added" x-transition class="text-emerald-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                {{-- Badge con cantidad --}}
+                <span
+                    x-show="count > 0"
+                    x-text="count"
+                    x-transition
+                    class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full"
+                ></span>
+            </button>
         </div>
     </x-slot>
 
-    <div x-data="cartManager({{ $business->id }})" x-init="initCart()" class="pb-24 bg-gray-50 min-h-screen">
+    {{-- El carrito es global (definido en el layout). Aquí solo pasamos contexto del negocio. --}}
+    <div class="pb-24 bg-gray-50 min-h-screen">
         {{-- Banner --}}
         <div class="relative w-full h-48 sm:h-64 bg-gray-300">
             @if($business->banner)
@@ -133,7 +161,17 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                             </svg>
                                         </button>
-                                        <button @click="addToCart({{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}')" class="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95">
+                                        <button
+                                            @click="$dispatch('add-to-cart', {
+                                                id: {{ $product->id }},
+                                                name: '{{ addslashes($product->name) }}',
+                                                price: {{ $product->price }},
+                                                image: '{{ $product->image_path ? (str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}',
+                                                businessId: {{ $business->id }},
+                                                businessName: '{{ addslashes($business->name) }}'
+                                            })"
+                                            class="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center shadow-sm transition-colors transform active:scale-95"
+                                        >
                                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                                             </svg>
@@ -153,234 +191,5 @@
             @endif
         </div>
 
-        {{-- Floating Cart Bottom Bar (Optional, for easy access) --}}
-        <div x-show="totalItems > 0"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="translate-y-full opacity-0"
-             x-transition:enter-end="translate-y-0 opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="translate-y-0 opacity-100"
-             x-transition:leave-end="translate-y-full opacity-0"
-             class="fixed bottom-0 left-0 right-0 p-4 z-40 lg:hidden pointer-events-none">
-            <button @click="$dispatch('open-cart')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl p-4 shadow-xl flex items-center justify-between pointer-events-auto transform transition-transform active:scale-[0.98]">
-                <div class="flex items-center gap-3">
-                    <div class="bg-emerald-800 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm" x-text="totalItems"></div>
-                    <span class="font-semibold text-sm">Ver pedido</span>
-                </div>
-                <span class="font-extrabold text-lg" x-text="'$' + totalPrice.toFixed(2)"></span>
-            </button>
-        </div>
-
-        {{-- Cart Drawer --}}
-        <div x-data="{ open: false }" @open-cart.window="open = true" @close-cart.window="open = false" class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-show="open">
-            <div x-show="open" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-                        <div x-show="open" @click.away="open = false" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="pointer-events-auto w-screen max-w-md">
-                            <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                                <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                                    <div class="flex items-start justify-between">
-                                        <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Tu Carrito</h2>
-                                        <div class="ml-3 flex h-7 items-center">
-                                            <button type="button" @click="open = false" class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
-                                                <span class="absolute -inset-0.5"></span>
-                                                <span class="sr-only">Cerrar panel</span>
-                                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="mt-8">
-                                        <div class="flow-root">
-                                            <template x-if="cart.length === 0">
-                                                <div class="text-center py-10">
-                                                    <div class="text-6xl mb-4">🛒</div>
-                                                    <p class="text-gray-500">Tu carrito está vacío</p>
-                                                    <button @click="open = false" class="mt-4 text-emerald-600 font-semibold hover:text-emerald-700">Continuar explorando</button>
-                                                </div>
-                                            </template>
-                                            <ul role="list" class="-my-6 divide-y divide-gray-200">
-                                                <template x-for="(item, index) in cart" :key="item.id">
-                                                    <li class="flex py-6">
-                                                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center">
-                                                            <template x-if="item.image">
-                                                                <img :src="item.image" :alt="item.name" class="h-full w-full object-cover object-center">
-                                                            </template>
-                                                            <template x-if="!item.image">
-                                                                <span class="text-2xl">🍲</span>
-                                                            </template>
-                                                        </div>
-                                                        <div class="ml-4 flex flex-1 flex-col">
-                                                            <div>
-                                                                <div class="flex justify-between text-sm font-medium text-gray-900">
-                                                                    <h3 x-text="item.name"></h3>
-                                                                    <p class="ml-4 font-bold text-emerald-600" x-text="'$' + (item.price * item.quantity).toFixed(2)"></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex flex-1 items-end justify-between text-sm">
-                                                                <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                                                    <button @click="updateQuantity(index, item.quantity - 1)" class="px-2 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">-</button>
-                                                                    <span class="px-3 py-1 font-semibold text-gray-900" x-text="item.quantity"></span>
-                                                                    <button @click="updateQuantity(index, item.quantity + 1)" class="px-2 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">+</button>
-                                                                </div>
-                                                                <div class="flex">
-                                                                    <button type="button" @click="removeFromCart(index)" class="font-medium text-red-500 hover:text-red-400">Eliminar</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                </template>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <template x-if="cart.length > 0">
-                                    <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-                                        <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
-                                            <p>Subtotal</p>
-                                            <p x-text="'$' + totalPrice.toFixed(2)"></p>
-                                        </div>
-                                        <p class="mt-0.5 text-sm text-gray-500">Impuestos y envío calculados al procesar el pago.</p>
-                                        <div class="mt-6">
-                                            <button @click="checkout()" :disabled="isCheckingOut" class="w-full flex items-center justify-center rounded-xl border border-transparent bg-emerald-600 px-6 py-3.5 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                                <span x-show="!isCheckingOut">Realizar pedido</span>
-                                                <span x-show="isCheckingOut">Procesando...</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <script>
-        window.cartManager = function(businessId) {
-            return {
-                cart: [],
-                businessId: businessId,
-                storageKey: 'cimafood_cart',
-                isCheckingOut: false,
-
-                get totalItems() {
-                    return this.cart.reduce((sum, item) => sum + item.quantity, 0);
-                },
-
-                get totalPrice() {
-                    return this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                },
-
-                initCart() {
-                    let storedCart = localStorage.getItem(this.storageKey);
-                    if (storedCart) {
-                        try {
-                            let parsed = JSON.parse(storedCart);
-                            // Solo se carga el carrito si es del mismo negocio, de lo contrario se borra o pregunta
-                            if (parsed.businessId === this.businessId) {
-                                this.cart = parsed.items;
-                            } else {
-                                // Borramos el carrito si es de otro negocio
-                                this.cart = [];
-                                localStorage.removeItem(this.storageKey);
-                            }
-                        } catch (e) {
-                            this.cart = [];
-                        }
-                    }
-                    this.updateBadge();
-                },
-
-                saveCart() {
-                    localStorage.setItem(this.storageKey, JSON.stringify({
-                        businessId: this.businessId,
-                        items: this.cart
-                    }));
-                    this.updateBadge();
-                },
-
-                updateBadge() {
-                    const badge = document.getElementById('cart-badge');
-                    if (badge) {
-                        badge.innerText = this.totalItems;
-                        badge.style.display = this.totalItems > 0 ? 'inline-flex' : 'none';
-                    }
-                },
-
-                addToCart(id, name, price, image) {
-                    const existingItemIndex = this.cart.findIndex(item => item.id === id);
-                    if (existingItemIndex > -1) {
-                        this.cart[existingItemIndex].quantity += 1;
-                    } else {
-                        this.cart.push({
-                            id: id,
-                            name: name,
-                            price: parseFloat(price),
-                            image: image,
-                            quantity: 1
-                        });
-                    }
-                    this.saveCart();
-                    this.$dispatch('cart-updated');
-                },
-
-                updateQuantity(index, quantity) {
-                    if (quantity <= 0) {
-                        this.removeFromCart(index);
-                        return;
-                    }
-                    this.cart[index].quantity = quantity;
-                    this.saveCart();
-                },
-
-                removeFromCart(index) {
-                    this.cart.splice(index, 1);
-                    this.saveCart();
-                    // Close cart if empty
-                    if (this.cart.length === 0) {
-                        // We could automatically close it here
-                    }
-                },
-
-                async checkout() {
-                    if (this.cart.length === 0 || this.isCheckingOut) return;
-                    this.isCheckingOut = true;
-
-                    try {
-                        const response = await fetch('{{ route('store.checkout') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                business_id: this.businessId,
-                                items: this.cart.map(item => ({ id: item.id, quantity: item.quantity }))
-                            })
-                        });
-
-                        if (response.ok) {
-                            alert('¡Pedido realizado con éxito!');
-                            this.cart = [];
-                            this.saveCart();
-                            this.$dispatch('close-cart');
-                        } else {
-                            const errorData = await response.json();
-                            alert(errorData.error || 'Hubo un error al procesar el pedido. Intenta nuevamente.');
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        alert('Error de conexión. Intenta nuevamente.');
-                    } finally {
-                        this.isCheckingOut = false;
-                    }
-                }
-            };
-        };
-    </script>
 </x-client-layout>

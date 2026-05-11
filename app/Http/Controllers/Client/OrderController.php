@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -21,50 +22,63 @@ class OrderController extends Controller
     }
 
     public function store(Request $request)
+    [][]
     {
         $request->validate([
             'business_id' => 'required|exists:businesses,id',
-            'items' => 'required|array',
-            'items.*.id' => 'required|exists:products,id',
+            'items'       => 'required|array|min:1',
+            'items.*.id'  => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
         $businessId = $request->input('business_id');
-        $items = $request->input('items');
+        $items      = $request->input('items');
 
-        // Fetch products to get accurate prices directly from DB
+        // Verificar que todos los productos pertenecen al negocio indicado
         $productIds = collect($items)->pluck('id');
-        $products = Product::whereIn('id', $productIds)->where('business_id', $businessId)->get()->keyBy('id');
+        $products   = Product::whereIn('id', $productIds)
+            ->where('business_id', $businessId)
+            ->get()
+            ->keyBy('id');
 
         if ($products->count() !== count($items)) {
-            return response()->json(['error' => 'Algunos productos son inválidos o no pertenecen a este negocio.'], 400);
+            return response()->json([
+                'error' => 'Algunos productos son inválidos o no pertenecen a este negocio.'
+            ], 422);
         }
 
-        $totalPrice = 0;
-        $orderProducts = [];
+        $order = DB::transaction(function () use ($businessId, $items, $products) {
+            $totalPrice    = 0;
+            $orderProducts = [];
 
-        foreach ($items as $item) {
-            $product = $products[$item['id']];
-            $quantity = $item['quantity'];
-            $subtotal = $product->price * $quantity;
-            $totalPrice += $subtotal;
+            foreach ($items as $item) {
+                $product  = $products[$item['id']];
+                $quantity = (int) $item['quantity'];
+                $subtotal = $product->price * $quantity;
 
-            $orderProducts[$product->id] = [
-                'quantity' => $quantity,
-                'price_unit' => $product->price,
-                'subtotal' => $subtotal,
-            ];
-        }
+                $totalPrice += $subtotal;
+                $orderProducts[$product->id] = [
+                    'quantity'   => $quantity,
+                    'price_unit' => $product->price,
+                    'subtotal'   => $subtotal,
+                ];
+            }
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'business_id' => $businessId,
-            'total_price' => $totalPrice,
-            'status' => 'pending',
-        ]);
+            $order = Order::create([
+                'user_id'     => Auth::id(),
+                'business_id' => $businessId,
+                'total_price' => $totalPrice,
+                'status'      => 'pending',
+            ]);
 
-        $order->products()->attach($orderProducts);
+            $order->products()->attach($orderProducts);
 
-        return response()->json(['message' => 'Order created successfully', 'order_id' => $order->id], 201);
+            return $order;
+        });
+
+        return response()->json([
+            'message'  => 'Pedido creado exitosamente.',
+            'order_id' => $order->id,
+        ], 201);
     }
 }
