@@ -39,7 +39,8 @@ class BusinessController extends Controller
    */
   public function show(Business $business)
   {
-    return view('businesses.show', compact('business'));
+    $ordersCount = $business->orders()->count();
+    return view('businesses.show', compact('business', 'ordersCount'));
   }
 
   /**
