@@ -73,7 +73,7 @@
             <!-- Botón de Acción -->
             <div class="flex pb-2">
               <a href="{{ route('business.edit', $business) }}" wire:navigate
-                class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 transition-all">
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 active:bg-yellow-700 transition-all duration-150">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -104,7 +104,7 @@
           </div>
 
           <!-- Tabs de navegación -->
-          <div x-data="{ activeTab: 'info' }" class="space-y-6">
+          <div x-data="{ activeTab: 'orders' }" class="space-y-6">
             <div class="border-b border-gray-100">
               <nav class="-mb-px flex gap-1 overflow-x-auto" aria-label="Secciones del negocio">
                 <button
