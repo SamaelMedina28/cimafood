@@ -4,6 +4,7 @@ namespace App\Livewire\Business;
 
 use App\Models\Business;
 use App\Models\Order;
+use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -53,6 +54,12 @@ class Orders extends Component
         // Asegurar que el pedido pertenece a este negocio
         if ($order->business_id !== $this->business->id) return;
 
+        if ($status === 'cancelled') {
+            // Restaurar la cantidad de los productos
+            foreach ($order->products as $product) {
+                Product::where('id', $product->id)->increment('quantity', $product->pivot->quantity);
+            }
+        }
         $order->update(['status' => $status]);
 
         // Actualizar la orden seleccionada si está abierta

@@ -4,6 +4,7 @@ namespace App\Livewire\Business;
 
 use App\Models\Business;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -25,9 +26,18 @@ class AllOrders extends Component
         'search'         => ['except' => ''],
     ];
 
-    public function updatedStatusFilter(): void   { $this->resetPage(); }
-    public function updatedBusinessFilter(): void { $this->resetPage(); }
-    public function updatedSearch(): void         { $this->resetPage(); }
+    public function updatedStatusFilter(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedBusinessFilter(): void
+    {
+        $this->resetPage();
+    }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function viewOrder(int $orderId): void
     {
@@ -48,7 +58,14 @@ class AllOrders extends Component
 
         $vendorBusinessIds = Auth::user()->businesses()->pluck('id')->toArray();
         $order = Order::whereIn('business_id', $vendorBusinessIds)->findOrFail($orderId);
+        if ($status === 'cancelled') {
+            // Restaurar la cantidad de los productos
+            foreach ($order->products as $product) {
+                Product::where('id', $product->id)->increment('quantity', $product->pivot->quantity);
+            }
+        }
         $order->update(['status' => $status]);
+
 
         if ($this->selectedOrder && $this->selectedOrder->id === $orderId) {
             $this->selectedOrder->refresh();
@@ -75,7 +92,7 @@ class AllOrders extends Component
         if ($this->search !== '') {
             $query->whereHas('user', function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
+                    ->orWhere('email', 'like', '%' . $this->search . '%');
             });
         }
 

@@ -207,21 +207,57 @@
                     </div>
 
                     {{-- Cambiar estado --}}
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cambiar Estado</h4>
-                        <div class="flex gap-2">
-                            @foreach ([
-        'pending' => ['label' => 'Pendiente', 'active' => 'bg-yellow-500 text-white border-yellow-500 hover:bg-amber-500', 'inactive' => 'bg-white text-yellow-750 border-yellow-300 hover:bg-yellow-50'],
-        'completed' => ['label' => 'Completado', 'active' => 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-800', 'inactive' => 'bg-white text-emerald-700 border-emerald-300 hover:bg-emerald-50'],
-        'cancelled' => ['label' => 'Cancelado', 'active' => 'bg-red-500 text-white border-red-500 hover:bg-red-700', 'inactive' => 'bg-white text-red-700 border-red-300 hover:bg-red-50'],
+                    <div x-data="{ confirmCancel: false }">
+                        @if ($selectedOrder->status !== 'cancelled')
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cambiar Estado
+                            </h4>
+                            <div class="flex gap-2">
+                                @foreach ([
+        'pending' => ['label' => 'Pendiente', 'active' => 'bg-yellow-500 text-white border-yellow-500 hover:bg-amber-500', 'inactive' => 'bg-white text-yellow-700 border-yellow-400 hover:bg-yellow-50'],
+        'completed' => ['label' => 'Completado', 'active' => 'bg-emerald-700 text-white border-emerald-700 hover:bg-emerald-850', 'inactive' => 'bg-white text-emerald-750 border-emerald-300 hover:bg-emerald-50'],
+        'cancelled' => ['label' => 'Cancelado', 'active' => 'bg-red-600 text-white border-red-600 hover:bg-red-700', 'inactive' => 'bg-white text-red-700 border-red-400 hover:bg-red-50'],
     ] as $sv => $sc)
-                                <button wire:click="updateStatus({{ $selectedOrder->id }}, '{{ $sv }}')"
-                                    wire:loading.attr="disabled"
-                                    class="flex-1 py-1.5 px-3 border rounded-md text-xs font-semibold shadow-sm transition-all duration-150 {{ $selectedOrder->status === $sv ? $sc['active'] : $sc['inactive'] }}">
-                                    {{ $sc['label'] }}
-                                </button>
-                            @endforeach
-                        </div>
+                                    @if ($sv === 'cancelled')
+                                        <button @click="confirmCancel = true" wire:loading.attr="disabled"
+                                            class="flex-1 py-1.5 px-3 border rounded-md text-xs font-semibold shadow-sm transition-all duration-150 {{ $selectedOrder->status === $sv ? $sc['active'] : $sc['inactive'] }}">
+                                            {{ $sc['label'] }}
+                                        </button>
+                                    @else
+                                        <button
+                                            wire:click="updateStatus({{ $selectedOrder->id }}, '{{ $sv }}')"
+                                            wire:loading.attr="disabled"
+                                            class="flex-1 py-1.5 px-3 border rounded-md text-xs font-semibold shadow-sm transition-all duration-150 {{ $selectedOrder->status === $sv ? $sc['active'] : $sc['inactive'] }}">
+                                            {{ $sc['label'] }}
+                                        </button>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            {{-- Modal confirm cancelación --}}
+                            <div x-show="confirmCancel" x-transition
+                                class="mt-3 p-3 border border-red-200 bg-red-50 rounded-lg">
+                                <p class="text-xs text-red-700 font-medium mb-3">⚠️ ¿Seguro que deseas cancelar este
+                                    pedido? Esta acción restaurará el stock pero no se puede deshacer.</p>
+                                <div class="flex gap-2">
+                                    <button wire:click="updateStatus({{ $selectedOrder->id }}, 'cancelled')"
+                                        @click="confirmCancel = false"
+                                        class="flex-1 py-1.5 px-3 bg-red-600 text-white border border-red-600 rounded-md text-xs font-semibold hover:bg-red-700 transition-all">
+                                        Sí, cancelar
+                                    </button>
+                                    <button @click="confirmCancel = false"
+                                        class="flex-1 py-1.5 px-3 bg-white text-gray-600 border border-gray-300 rounded-md text-xs font-semibold hover:bg-gray-50 transition-all">
+                                        No, volver
+                                    </button>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Pedido cancelado --}}
+                            <div class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <span class="text-red-500 text-lg">✕</span>
+                                <p class="text-xs font-semibold text-red-700">Este pedido fue cancelado y no puede
+                                    modificarse.</p>
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Productos --}}
