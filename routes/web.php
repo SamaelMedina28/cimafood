@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\FavoriteController as ClientFavoriteController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
   return view('welcome');
@@ -19,9 +20,7 @@ Route::middleware([
   'verified',
 ])->group(function () {
   //Si no es vendor redirigir a tienda
-  Route::get('/dashboard', function () {
-    return Auth::user()->is_vendor ? view('dashboard') : redirect()->route('store');
-  })->name('dashboard');
+  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
   // Admin
   Route::resource('/business', BusinessController::class);
