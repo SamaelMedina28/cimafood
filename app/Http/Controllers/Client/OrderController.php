@@ -71,9 +71,9 @@ class OrderController extends Controller
             ]);
 // TODO: Verificar tambien que cuando se cancele el pedido el stock vuelva a estar disponible de nuevo en el negocio
             $order->products()->attach($orderProducts);
-            // Actualizar la cantidad de los productos
-            foreach ($orderProducts as $productId => $data) {
-                Product::where('id', $productId)->decrement('quantity', $data['quantity']);
+            // Actualizar el stock de los productos
+            foreach ($products as $product) {
+                Product::where('id', $product->id)->decrement('quantity', $orderProducts[$product->id]['quantity']);
             }
 
             return $order;
