@@ -33,11 +33,11 @@ class UpdateBusiness extends Form
         ];
 
         if ($this->logo instanceof TemporaryUploadedFile) {
-            $rules['logo'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+            $rules['logo'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:20048';
         }
 
         if ($this->banner instanceof TemporaryUploadedFile) {
-            $rules['banner'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048';
+            $rules['banner'] = 'required|image|mimes:jpeg,png,jpg,gif,svg|max:20048';
         }
 
         return $rules;
