@@ -22,7 +22,6 @@ class OrderController extends Controller
     }
 
     public function store(Request $request)
-    [][]
     {
         $request->validate([
             'business_id' => 'required|exists:businesses,id',
