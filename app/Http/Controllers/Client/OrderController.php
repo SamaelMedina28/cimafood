@@ -69,8 +69,12 @@ class OrderController extends Controller
                 'total_price' => $totalPrice,
                 'status'      => 'pending',
             ]);
-
+// TODO: Verificar tambien que cuando se cancele el pedido el stock vuelva a estar disponible de nuevo en el negocio
             $order->products()->attach($orderProducts);
+            // Actualizar la cantidad de los productos
+            foreach ($orderProducts as $productId => $data) {
+                Product::where('id', $productId)->decrement('quantity', $data['quantity']);
+            }
 
             return $order;
         });
