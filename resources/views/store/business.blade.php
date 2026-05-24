@@ -21,7 +21,7 @@
                         window.addEventListener('cart-count-updated', e => this.count = e.detail.count);
                         window.addEventListener('add-to-cart', () => {
                             this.added = true;
-                            setTimeout(() => this.added = false, 2000);
+                            setTimeout(() => this.added = false, 1000);
                         });
                     }
                 }" x-init="init()"
@@ -83,7 +83,7 @@
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">{{ $business->name }}</h1>
                     <p class="text-sm text-gray-500 mt-1 line-clamp-2">
                         {{ $business->description ?? 'Sin descripción disponible.' }}</p>
-                    <div class="flex items-center justify-center sm:justify-start gap-4 mt-3">
+                    <div class="flex items-center justify-center sm:justify-start gap-3 mt-3">
                         {{--  Horario de Atención --}}
                         @php
                             // Sacar la hora actual
@@ -94,11 +94,40 @@
                             class="text-sm font-medium text-gray-700 border px-3 py-1 rounded-full {{ $isOpen ? 'bg-green-100 border-green-400' : 'bg-red-100 border-red-400' }}">
                             {{ $business->open_time }} - {{ $business->close_time }}
                         </div>
-                        <div
-                            class="flex items-center text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-full">
+                        <button
+                            class="flex items-center text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-full cursor-pointer shadow-md">
                             <span class="text-yellow-500 mr-1">★</span>
-                            {{ number_format($business->averageRating() ?? 0, 1) }} ({{ $business->totalReviews() }}+)
-                        </div>
+                            {{ number_format($business->averageRating() ?? 0, 1) }} ({{ $business->totalReviews() }}
+                            reseñas)
+                        </button>
+                        {{-- Botón para dejar reseña --}}
+                        @if (auth()->check() && !$hasReviewed)
+                            <button @click="window.dispatchEvent(new CustomEvent('open-review-modal'))"
+                                class="flex items-center p-1 text-gray-600 bg-gray-100 text-sm font-semibold rounded-full shadow-md hover:bg-gray-200 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        @elseif(auth()->check() && $hasReviewed)
+                            <button
+                                class="flex items-center p-1 text-gray-400 bg-gray-100 text-sm font-semibold rounded-full shadow-md cursor-not-allowed"
+                                disabled>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                            </button>
+                        @else
+                            <button
+                                class="flex items-center p-1 text-gray-600 bg-gray-100 text-sm font-semibold rounded-full shadow-md hover:bg-gray-200 transition-colors"
+                                onclick="window.location.href='{{ route('login') }}'">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -189,8 +218,8 @@
                                             :disabled="{{ isset($product->quantity) && $product->quantity <= 0 ? 'true' : 'false' }}">
                                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M12 4v16m8-8H4" />
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2.5" d="M12 4v16m8-8H4" />
                                             </svg>
                                         </button>
                                     </div>
@@ -212,5 +241,100 @@
             @endif
         </div>
 
+    </div>
+
+    {{-- Modal para dejar reseña --}}
+    <div x-data="{
+        showModal: false,
+        rating: 0,
+        comment: '',
+        loading: false,
+        init() {
+            window.addEventListener('open-review-modal', () => {
+                this.showModal = true;
+            });
+        },
+        submitReview() {
+            if (this.rating === 0) {
+                alert('Por favor selecciona una calificación');
+                return;
+            }
+            this.loading = true;
+            fetch('{{ route('store.reviews.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        business_id: {{ $business->id }},
+                        rating: this.rating,
+                        comment: this.comment
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('¡Reseña enviada con éxito!');
+                        this.showModal = false;
+                        this.rating = 0;
+                        this.comment = '';
+                        window.location.reload();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error al enviar la reseña');
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        }
+    }" x-init="init()" x-show="showModal" x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" style="display: none;">
+        <div @click.away="showModal = false" x-show="showModal" x-transition.scale
+            class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Dejar una reseña</h3>
+                <button @click="showModal = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Calificación</label>
+                <div class="flex gap-2">
+                    <template x-for="i in 5">
+                        <button @click="rating = i" class="text-3xl transition-colors"
+                            :class="rating >= i ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'">
+                            ★
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Comentario (opcional)</label>
+                <textarea x-model="comment" rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
+                    placeholder="Cuéntanos tu experiencia..."></textarea>
+            </div>
+
+            <div class="flex gap-3">
+                <button @click="showModal = false"
+                    class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                    Cancelar
+                </button>
+                <button @click="submitReview()" :disabled="loading"
+                    class="flex-1 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span x-show="!loading">Enviar</span>
+                    <span x-show="loading">Enviando...</span>
+                </button>
+            </div>
+        </div>
     </div>
 </x-client-layout>
