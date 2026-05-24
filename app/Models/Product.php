@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Order;
 
 class Product extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -19,5 +23,10 @@ class Product extends Model
     public function business()
     {
         return $this->belongsTo(Business::class);
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_product')->withPivot('quantity', 'price_unit', 'subtotal');
     }
 }

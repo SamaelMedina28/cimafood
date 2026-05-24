@@ -1,3 +1,3 @@
 <a href="/">
-    <img src="Logo-uabc.png" alt="Logo" class="size-48 object-contain">
+    <img src="{{ asset('Logo-uabc.png') }}" alt="Logo UABC" class="size-40 object-contain">
 </a>

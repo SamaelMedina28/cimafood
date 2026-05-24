@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('phone');
-            $table->string('logo');
-            $table->string('banner');
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->string('logo')->nullable();
+            $table->string('banner')->nullable();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->float('rating', 2)->max(5)->min(0)->default(0);
             $table->time('open_time');
             $table->time('close_time');
