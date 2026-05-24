@@ -24,10 +24,12 @@ Route::middleware([
   //Si no es vendor redirigir a tienda
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-  // Admin
-  Route::resource('/business', BusinessController::class);
-  Route::resource('/product', ProductController::class);
-  Route::resource('/order', OrderController::class);
+  // Admin - Solo vendors pueden acceder
+  Route::middleware('is_vendor')->group(function () {
+    Route::resource('/business', BusinessController::class);
+    Route::resource('/product', ProductController::class);
+    Route::resource('/order', OrderController::class);
+  });
 
   // Cliente
   Route::prefix('store')->group(function () {
