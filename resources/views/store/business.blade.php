@@ -94,8 +94,8 @@
                             class="text-sm font-medium text-gray-700 border px-3 py-1 rounded-full {{ $isOpen ? 'bg-green-100 border-green-400' : 'bg-red-100 border-red-400' }}">
                             {{ $business->open_time }} - {{ $business->close_time }}
                         </div>
-                        <button
-                            class="flex items-center text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-full cursor-pointer shadow-md">
+                        <button @click="window.dispatchEvent(new CustomEvent('open-reviews-modal'))"
+                            class="flex items-center text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1 rounded-full cursor-pointer shadow-md hover:bg-gray-200 transition-colors">
                             <span class="text-yellow-500 mr-1">★</span>
                             {{ number_format($business->averageRating() ?? 0, 1) }} ({{ $business->totalReviews() }}
                             reseñas)
@@ -334,6 +334,75 @@
                     <span x-show="!loading">Enviar</span>
                     <span x-show="loading">Enviando...</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal para ver todas las reseñas --}}
+    <div x-data="{
+        showModal: false,
+        init() {
+            window.addEventListener('open-reviews-modal', () => {
+                this.showModal = true;
+            });
+        }
+    }" x-init="init()" x-show="showModal" x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" style="display: none;">
+        <div @click.away="showModal = false" x-show="showModal" x-transition.scale
+            class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900">Todas las Reseñas</h3>
+                    <button @click="showModal = false" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6">
+                @if ($business->reviews->count() > 0)
+                    <div class="space-y-4">
+                        @foreach ($business->reviews as $review)
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                                            <span class="text-sm font-bold text-emerald-600">
+                                                {{ strtoupper(substr($review->user->name ?? 'A', 0, 1)) }}
+                                            </span>
+                                        </div>
+                                        <span
+                                            class="font-medium text-gray-900">{{ $review->user->name ?? 'Anónimo' }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <span
+                                                class="{{ $i <= $review->rating ? 'text-yellow-500' : 'text-gray-300' }}">★</span>
+                                        @endfor
+                                    </div>
+                                </div>
+                                @if ($review->comment)
+                                    <p class="text-sm text-gray-600 mt-2">{{ $review->comment }}</p>
+                                @endif
+                                <p class="text-xs text-gray-400 mt-2">{{ $review->created_at->format('d/m/Y H:i') }}
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                        <p class="text-gray-500">Aún no hay reseñas</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
