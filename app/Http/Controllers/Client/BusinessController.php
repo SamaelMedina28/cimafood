@@ -7,6 +7,12 @@ use App\Models\Business;
 
 class BusinessController extends Controller
 {
+    public function index()
+    {
+        $businesses = Business::where('status', 'active')->with('products')->paginate(12);
+        return view('store.businesses', compact('businesses'));
+    }
+
     public function show(Business $business)
     {
         $business->load(['products' => fn($q) => $q->where('status', 'available')]);
