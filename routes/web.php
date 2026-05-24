@@ -9,6 +9,7 @@ use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\FavoriteController as ClientFavoriteController;
 use App\Http\Controllers\Client\ReviewController as ClientReviewController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -34,7 +35,10 @@ Route::middleware([
       return view('store.dashboard');
     })->name('store');
     //Negocios
+    Route::get('/businesses', [ClientBusinessController::class, 'index'])->name('store.businesses');
     Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
+    //Productos
+    Route::get('/products', [ClientProductController::class, 'index'])->name('store.products');
 
     //Favoritos
     Route::get('/favorites', [ClientFavoriteController::class, 'index'])->name('store.favorites');
