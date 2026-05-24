@@ -9,7 +9,7 @@ class BusinessController extends Controller
 {
     public function show(Business $business)
     {
-        $business->load('products');
+        $business->load(['products' => fn($q) => $q->where('status', 'available')]);
         $favorites = auth()->check() ? auth()->user()->favorites()->pluck('products.id')->toArray() : [];
         return view('store.business', compact('business', 'favorites'));
     }

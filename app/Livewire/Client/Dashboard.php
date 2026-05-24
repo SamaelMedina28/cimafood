@@ -31,9 +31,9 @@ class Dashboard extends Component
     public function render()
     {
         // TODO: implementar filtrosn para productos mas pedidos ultimamente siguiendo un algoritmo tomando como referencia los ultimos 30 pedidos hechos en la plataforma
-        $this->businesses = Business::limit(10)->get();
-        $this->products = Product::all();
-        $this->featuredProducts = Product::all();
+        $this->businesses = Business::where('status', 'active')->limit(10)->get();
+        $this->products = Product::where('status', 'available')->limit(10)->get();
+        $this->featuredProducts = Product::where('status', 'available')->limit(10)->get();
         return view('livewire.client.dashboard');
     }
 }
