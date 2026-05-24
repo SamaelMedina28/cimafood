@@ -5,35 +5,73 @@ namespace App\Livewire\Client;
 use Livewire\Component;
 use App\Models\Business;
 use App\Models\Product;
+use App\Models\Order;
+use Illuminate\Support\Facades\DB;
+
 class Dashboard extends Component
 {
 
     public $businesses;
     public $products;
     public $featuredProducts;
-    public $filter = 'todos';
+    public String $filter = 'todos';
 
-    public function mount()
-    {
-    }
+    public function mount() {}
 
-    public function filterBusiness($filter)
+    public function setFilter(String $filter)
     {
-        // TODO: implementar vistas para filtros de productos y de negocios
         $this->filter = $filter;
-        if ($filter == 'abiertos'){
-            $horaActual = date('H:i:s');
-            $this->businesses = Business::where('open_time', '<=', $horaActual)->where('close_time', '>=', $horaActual)->limit(10)->get();
-        }
+        $this->render();
     }
-
 
     public function render()
     {
-        // TODO: implementar filtrosn para productos mas pedidos ultimamente siguiendo un algoritmo tomando como referencia los ultimos 30 pedidos hechos en la plataforma
-        $this->businesses = Business::where('status', 'active')->limit(10)->get();
-        $this->products = Product::where('status', 'available')->limit(10)->get();
-        $this->featuredProducts = Product::where('status', 'available')->limit(10)->get();
+        $horaActual = date('H:i');
+
+        switch ($this->filter) {
+            case 'abierto':
+                $this->businesses = Business::where('status', 'active')
+                    ->where('open_time', '<=', $horaActual)
+                    ->where('close_time', '>=', $horaActual)
+                    ->limit(10)
+                    ->get();
+                $this->products = collect();
+                break;
+
+            case 'populares':
+                $this->businesses = Business::where('status', 'active')
+                    ->withCount('orders')
+                    ->orderBy('orders_count', 'desc')
+                    ->limit(10)
+                    ->get();
+                $this->products = collect();
+                break;
+
+            case 'economico':
+                $this->businesses = collect();
+                $this->products = Product::where('status', 'available')
+                    ->where('price', '<', 50)
+                    ->with('business')
+                    ->limit(20)
+                    ->get();
+                break;
+            case 'todos':
+            default:
+                $this->businesses = Business::where('status', 'active')->limit(10)->get();
+                $this->products = collect();
+                break;
+        }
+
+        // Productos más vendidos (top 20) basados en cantidad vendida
+        $this->featuredProducts = Product::where('status', 'available')
+            ->with('business')
+            ->withCount(['orders as total_sold' => function ($query) {
+                $query->select(DB::raw('SUM(order_product.quantity)'));
+            }])
+            ->orderBy('total_sold', 'desc')
+            ->limit(20)
+            ->get();
+
         return view('livewire.client.dashboard');
     }
 }
