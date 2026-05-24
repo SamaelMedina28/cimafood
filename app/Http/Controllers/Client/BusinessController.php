@@ -11,6 +11,7 @@ class BusinessController extends Controller
     {
         $business->load(['products' => fn($q) => $q->where('status', 'available')]);
         $favorites = auth()->check() ? auth()->user()->favorites()->pluck('products.id')->toArray() : [];
-        return view('store.business', compact('business', 'favorites'));
+        $hasReviewed = auth()->check() ? $business->reviews()->where('user_id', auth()->id())->exists() : false;
+        return view('store.business', compact('business', 'favorites', 'hasReviewed'));
     }
 }
