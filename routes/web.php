@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\FavoriteController as ClientFavoriteController;
+use App\Http\Controllers\Client\ReviewController as ClientReviewController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
@@ -38,6 +39,8 @@ Route::middleware([
     //Favoritos
     Route::get('/favorites', [ClientFavoriteController::class, 'index'])->name('store.favorites');
     Route::post('/favorites/toggle/{product}', [ClientFavoriteController::class, 'toggle'])->name('store.favorites.toggle');
+    //Reseñas
+    Route::post('/reviews', [ClientReviewController::class, 'store'])->name('store.reviews.store');
     //Pedidos
     Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
     Route::get('/orders', [ClientOrderController::class, 'index'])->name('store.orders');
