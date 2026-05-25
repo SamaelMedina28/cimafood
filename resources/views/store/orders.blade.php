@@ -69,7 +69,7 @@
                 <div class="text-6xl mb-4 opacity-75">🍽️</div>
                 <h3 class="text-xl font-bold text-gray-800">No tienes pedidos aún</h3>
                 <p class="text-sm text-gray-500 mt-2">Parece que aún no has realizado ninguna compra. ¡Explora los negocios y disfruta de la comida!</p>
-                <a href="{{ route('store') }}" wire:navigate class="inline-block mt-6 px-8 py-3 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transition-colors shadow-md hover:shadow-lg transform active:scale-95">
+                <a href="{{ route('store') }}" wire:navigate class="inline-block mt-6 px-6 py-2 text-white font-bold rounded-full bg-green-700 hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition ease-in-out duration-150 transition-colors shadow-md hover:shadow-lg">
                     Hacer mi primer pedido
                 </a>
             </div>
