@@ -21,7 +21,7 @@
         <!-- Banner Superior -->
         <div class="h-48 sm:h-64 w-full bg-gradient-to-r from-emerald-500 to-green-600 relative group">
           @if ($business->banner)
-            <img src="{{ asset('storage/' . $business->banner) }}" alt="Banner de {{ $business->name }}"
+            <img src="{{ str_starts_with($business->banner, 'http') ? $business->banner : asset('storage/' . $business->banner) }}"
               class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors"></div>
           @endif
@@ -38,7 +38,7 @@
               <div
                 class="flex-shrink-0 h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
                 @if ($business->logo)
-                  <img src="{{ asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}"
+                  <img src="{{ str_starts_with($business->logo, 'http') ? $business->logo : asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}"
                     class="h-full w-full object-cover">
                 @else
                   <div

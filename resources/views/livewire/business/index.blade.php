@@ -19,7 +19,8 @@
                     <div class="flex items-start sm:items-center space-x-4 sm:space-x-5">
                         <div class="flex-shrink-0 mt-1 sm:mt-0">
                             @if ($business->logo)
-                                <img src="{{ asset('storage/' . $business->logo) }}" alt="{{ $business->name }}"
+                            
+                                <img src="{{ str_starts_with($business->logo, 'http') ? $business->logo : asset('storage/' . $business->logo) }}"
                                     class="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm">
                             @else
                                 <div
