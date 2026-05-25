@@ -34,7 +34,7 @@
                         <div
                             class="flex items-center justify-center bg-gray-50 rounded-lg border border-gray-100 overflow-hidden min-h-[300px]">
                             @if ($product->image_path)
-                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
+                                <img src="{{ str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path) }}"
                                     class="w-full h-full object-cover">
                             @else
                                 <svg class="w-24 h-24 text-gray-300" fill="none" stroke="currentColor"

@@ -57,7 +57,7 @@
                             <div class="flex items-start sm:items-center space-x-4 sm:space-x-5">
                                 <div class="flex-shrink-0 mt-1 sm:mt-0">
                                     @if ($product->image_path)
-                                        <img src="{{ asset('storage/' . $product->image_path) }}"
+                                        <img src="{{ str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path) }}"
                                             alt="{{ $product->name }}"
                                             class="w-16 h-16 rounded-2xl object-cover border border-gray-100 shadow-sm">
                                     @else
