@@ -73,7 +73,9 @@ return [
     |
     */
 
-    'home' => '/dashboard',
+    'home' => function () {
+        return auth()->user()->is_vendor ? route('business.index') : route('dashboard');
+    },
 
     /*
     |--------------------------------------------------------------------------

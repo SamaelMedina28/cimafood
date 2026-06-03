@@ -1,59 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CimaFood
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![CimaFood Logo](https://raw.githubusercontent.com/SamaelMedina28/cimafood/main/public/logo.png)
 
-## About Laravel
+## 📖 Descripción del proyecto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**CimaFood** es una plataforma web de pedidos de alimentos desarrollada con **Laravel 12** que permite a los usuarios explorar menús, crear órdenes y gestionar entregas en tiempo real. El objetivo es ofrecer una experiencia de compra rápida, segura y amigable tanto para clientes como para negocios.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Características principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Catálogo de negocios y platos** con filtros por categoría, precio y valoración.
+- **Carrito de compras** persistente y cálculo automático de impuestos y propinas.
+- **Panel de administración** para gestionar menús, pedidos y usuarios.
 
-## Learning Laravel
+## 🛠️ Stack tecnológico
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Área | Herramienta |
+|------|-------------|
+| Backend | **Laravel 12**, PHP 8.2, MySQL 8 |
+| Frontend | **Livewire 3**, **Alpine.js 4** |
+| Auth | **Laravel Jetstream** |
+| UI | **Tailwind CSS 4** |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalación rápida
 
-## Laravel Sponsors
+```bash
+# Clonar el repositorio
+git clone https://github.com/SamaelMedina28/cimafood.git
+cd cimafood
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Instalar dependencias
+autorun=0 composer install
+npm install && npm run build
 
-### Premium Partners
+# Copiar archivo de entorno
+touch .env
+cp .env.example .env
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Generar clave de aplicación
+php artisan key:generate
 
-## Contributing
+# Migrar base de datos
+php artisan migrate --seed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Levantar servidor de desarrollo
+php artisan serve
+```
 
-## Code of Conduct
+El proyecto quedará disponible en `http://127.0.0.1:8000`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📦 Configuración de variables de entorno
 
-## Security Vulnerabilities
+| Variable | Descripción | Valor por defecto |
+|----------|------------|-------------------|
+| `APP_NAME` | Nombre de la aplicación | CimaFood |
+| `APP_ENV` | Entorno (local, production) | local |
+| `APP_KEY` | Clave de cifrado (generada) | `` |
+| `DB_CONNECTION` | Driver de BD | mysql |
+| `DB_HOST` | Host de MySQL | 127.0.0.1 |
+| `DB_DATABASE` | Nombre de la base de datos | cimafood |
+| `DB_USERNAME` | Usuario BD | root |
+| `DB_PASSWORD` | Contraseña BD | `` |
+| `STRIPE_KEY` | API key pública de Stripe | `` |
+| `STRIPE_SECRET` | API secret de Stripe | `` |
+| `PUSHER_APP_KEY` | Key de Pusher | `` |
+| `PUSHER_APP_SECRET` | Secret de Pusher | `` |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📋 Uso básico
 
-## License
+1. Regístrate o inicia sesión.
+2. Navega por los restaurantes y agrega platos al carrito.
+3. Completa la orden y elige método de pago.
+4. Recibe notificaciones del estado del pedido.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas! Sigue estos pasos:
+
+1. Fork el repositorio.
+2. Crea una rama feature: `git checkout -b feature/nueva-funcionalidad`.
+3. Implementa los cambios.
+4. Abre un Pull Request describiendo los cambios.
+
+Lee `CONTRIBUTING.md` para más detalles.
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más información.
+
+---
+
+*Hecho con ❤️ usando Laravel.*
