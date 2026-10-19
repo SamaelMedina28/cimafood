@@ -17,8 +17,14 @@ class FormCreate extends Component
         return view('livewire.business.form-create');
     }
 
+    public function mount()
+    {
+        $this->authorize('create', \App\Models\Business::class);
+    }
+
     public function store()
     {
+        $this->authorize('create', \App\Models\Business::class);
         $this->business->store();
         return redirect()->route('business.index');
     }

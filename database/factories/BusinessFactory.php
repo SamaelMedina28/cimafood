@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,16 +18,17 @@ class BusinessFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
-            'description' => $this->faker->text,
+            'name' => $this->faker->company,
+            'description' => $this->faker->sentence,
             'logo' => $this->faker->imageUrl,
             'banner' => $this->faker->imageUrl,
             'phone' => $this->faker->phoneNumber,
-            'open_time' => $this->faker->time('H:i'),
-            'close_time' => $this->faker->time('H:i'),
-            'status' => $this->faker->randomElement(['active', 'inactive']),
-            'rating' => rand(0, 5),
-            'user_id' => 1,
+            // Abierto todo el día para que los pedidos de prueba no dependan de la hora
+            'open_time' => '00:00',
+            'close_time' => '23:59',
+            'status' => 'active',
+            'rating' => 0,
+            'user_id' => User::factory()->vendor(),
         ];
     }
 }

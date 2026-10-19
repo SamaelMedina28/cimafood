@@ -4,7 +4,8 @@ namespace App\Livewire\Business;
 
 use App\Models\Business;
 use App\Models\Order;
-use App\Models\Product;
+use App\Services\OrderService;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -24,6 +25,7 @@ class Orders extends Component
 
     public function mount(Business $business): void
     {
+        $this->authorize('manage', $business);
         $this->business = $business;
     }
 
@@ -34,7 +36,7 @@ class Orders extends Component
 
     public function viewOrder(int $orderId): void
     {
-        $this->selectedOrder = Order::with(['user', 'products'])->findOrFail($orderId);
+        $this->selectedOrder = $this->business->orders()->with(['user', 'products', 'business'])->findOrFail($orderId);
         $this->showOrderDetail = true;
     }
 
@@ -46,21 +48,16 @@ class Orders extends Component
 
     public function updateStatus(int $orderId, string $status): void
     {
-        $allowed = ['pending', 'completed', 'cancelled'];
-        if (!in_array($status, $allowed)) return;
+        $order = $this->business->orders()->findOrFail($orderId);
+        $this->authorize('manage', $order);
+        $this->resetErrorBag('status');
 
-        $order = Order::findOrFail($orderId);
-
-        // Asegurar que el pedido pertenece a este negocio
-        if ($order->business_id !== $this->business->id) return;
-
-        if ($status === 'cancelled') {
-            // Restaurar la cantidad de los productos
-            foreach ($order->products as $product) {
-                Product::where('id', $product->id)->increment('quantity', $product->pivot->quantity);
-            }
+        try {
+            app(OrderService::class)->changeStatus($order, $status);
+        } catch (ValidationException $e) {
+            $this->addError('status', $e->getMessage());
+            return;
         }
-        $order->update(['status' => $status]);
 
         // Actualizar la orden seleccionada si está abierta
         if ($this->selectedOrder && $this->selectedOrder->id === $orderId) {

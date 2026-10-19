@@ -15,12 +15,14 @@ class FormEdit extends Component
 
     public function mount($business)
     {
+        $this->authorize('manage', $business);
         $this->business = $business;
         $this->updateBusiness->setForm($business);
     }
 
     public function update()
     {
+        $this->authorize('manage', $this->business);
         $this->updateBusiness->update($this->business);
         $this->redirect(route('business.index'), navigate: true);
     }

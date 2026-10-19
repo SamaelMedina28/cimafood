@@ -37,7 +37,7 @@ class UserFactory extends Factory
             'profile_photo_path' => null,
             'current_team_id' => null,
             'phone' => $this->faker->phoneNumber,
-            'is_vendor' => $this->faker->boolean,
+            'is_vendor' => false,
         ];
     }
 
@@ -70,5 +70,15 @@ class UserFactory extends Factory
                 ->when(is_callable($callback), $callback),
             'ownedTeams'
         );
+    }
+
+    /**
+     * Usuario vendedor (puede administrar negocios).
+     */
+    public function vendor(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_vendor' => true,
+        ]);
     }
 }

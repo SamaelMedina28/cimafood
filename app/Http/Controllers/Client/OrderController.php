@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Product;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -21,67 +21,39 @@ class OrderController extends Controller
         return view('store.orders', compact('orders'));
     }
 
-    public function store(Request $request)
+    // Recibe el carrito completo (puede traer productos de varios negocios)
+    // y crea un pedido por negocio en una sola transacción.
+    public function store(Request $request, OrderService $orders)
     {
-        $request->validate([
-            'business_id' => 'required|exists:businesses,id',
-            'items'       => 'required|array|min:1',
-            'items.*.id'  => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
+        $validated = $request->validate([
+            'items'            => 'required|array|min:1',
+            'items.*.id'       => 'required|integer',
+            'items.*.quantity' => 'required|integer|min:1|max:99',
         ]);
 
-        $businessId = $request->input('business_id');
-        $items      = $request->input('items');
+        $created = $orders->place(Auth::user(), $validated['items']);
 
-        // Verificar que todos los productos pertenecen al negocio indicado
-        $productIds = collect($items)->pluck('id');
-        $products   = Product::whereIn('id', $productIds)
-            ->where('business_id', $businessId)
-            ->get()
-            ->keyBy('id');
-
-        if ($products->count() !== count($items)) {
-            return response()->json([
-                'error' => 'Algunos productos son inválidos o no pertenecen a este negocio.'
-            ], 422);
-        }
-
-        $order = DB::transaction(function () use ($businessId, $items, $products) {
-            $totalPrice    = 0;
-            $orderProducts = [];
-
-            foreach ($items as $item) {
-                $product  = $products[$item['id']];
-                $quantity = (int) $item['quantity'];
-                $subtotal = $product->price * $quantity;
-
-                $totalPrice += $subtotal;
-                $orderProducts[$product->id] = [
-                    'quantity'   => $quantity,
-                    'price_unit' => $product->price,
-                    'subtotal'   => $subtotal,
-                ];
-            }
-
-            $order = Order::create([
-                'user_id'     => Auth::id(),
-                'business_id' => $businessId,
-                'total_price' => $totalPrice,
-                'status'      => 'pending',
-            ]);
-// TODO: Verificar tambien que cuando se cancele el pedido el stock vuelva a estar disponible de nuevo en el negocio
-            $order->products()->attach($orderProducts);
-            // Actualizar el stock de los productos
-            foreach ($products as $product) {
-                Product::where('id', $product->id)->decrement('quantity', $orderProducts[$product->id]['quantity']);
-            }
-
-            return $order;
-        });
+        $count = $created->count();
+        session()->flash('flash.banner', $count === 1
+            ? 'Pedido enviado. Puedes seguir su estado aquí.'
+            : "Se enviaron {$count} pedidos, uno por negocio. Puedes seguir su estado aquí.");
+        session()->flash('flash.bannerStyle', 'success');
 
         return response()->json([
-            'message'  => 'Pedido creado exitosamente.',
-            'order_id' => $order->id,
+            'message'   => 'Pedido creado exitosamente.',
+            'order_ids' => $created->pluck('id'),
         ], 201);
+    }
+
+    public function cancel(Order $order, OrderService $orders)
+    {
+        Gate::authorize('cancel', $order);
+
+        $orders->changeStatus($order, 'cancelled');
+
+        return redirect()->route('store.orders')->with([
+            'flash.banner' => "Cancelaste el pedido #{$order->id}.",
+            'flash.bannerStyle' => 'success',
+        ]);
     }
 }

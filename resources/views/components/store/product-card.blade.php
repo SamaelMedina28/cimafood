@@ -70,8 +70,8 @@
         @if ($favorite !== null)
             <button type="button" @click="toggleFavorite()" :disabled="loading"
                 :aria-label="isFavorite ? 'Quitar de favoritos' : 'Guardar en favoritos'"
-                class="absolute top-2 right-2 size-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
-                :class="isFavorite ? 'text-rose-500' : 'text-gray-500 hover:text-gray-900'">
+                class="absolute top-2 right-2 z-10 size-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-sm transition-colors hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 {{ $favorite ? 'text-rose-500' : 'text-gray-500' }}"
+                :class="{ 'text-rose-500 hover:text-rose-600': isFavorite, 'text-gray-500': !isFavorite }">
                 <svg class="size-[18px]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"
                     stroke-linecap="round" stroke-linejoin="round" fill="{{ $favorite ? 'currentColor' : 'none' }}" :fill="isFavorite ? 'currentColor' : 'none'">
                     <path
@@ -89,7 +89,13 @@
 
     {{-- Info --}}
     <div @class(['flex flex-1 flex-col min-w-0', 'pt-3' => $variant === 'card'])>
-        <h3 class="font-semibold text-gray-900 leading-snug line-clamp-1">{{ $product->name }}</h3>
+        <h3 class="font-semibold text-gray-900 leading-snug line-clamp-1">
+            <a href="{{ route('store.product', $product) }}" wire:navigate class="hover:text-green-700 focus:outline-none focus-visible:underline">
+                {{ $product->name }}
+                {{-- Toda la foto lleva a la página del producto --}}
+                <span class="absolute inset-x-0 top-0 {{ $variant === 'card' ? 'aspect-[4/3]' : 'hidden' }}" aria-hidden="true"></span>
+            </a>
+        </h3>
 
         @if ($variant === 'card' && !request()->routeIs('store.business'))
             <a href="{{ route('store.business', $business->id) }}" wire:navigate

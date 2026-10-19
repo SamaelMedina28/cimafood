@@ -2,7 +2,10 @@
 
 @php
     $isOpen = $business->isOpen();
-    $rating = $business->averageRating();
+    // Usa los agregados precargados (withAvg/withCount) para no consultar por cada tarjeta
+    $preloaded = array_key_exists('reviews_count', $business->getAttributes());
+    $rating = $preloaded ? $business->reviews_avg_rating : $business->averageRating();
+    $reviewsCount = $preloaded ? $business->reviews_count : $business->totalReviews();
 @endphp
 
 <a href="{{ route('store.business', $business->id) }}" wire:navigate
@@ -41,7 +44,7 @@
                     <x-icon name="star" class="size-4 text-amber-400" />
                     @if ($rating)
                         <span class="font-medium text-gray-700">{{ number_format($rating, 1) }}</span>
-                        <span>({{ $business->totalReviews() }})</span>
+                        <span>({{ $reviewsCount }})</span>
                     @else
                         <span>Sin reseñas</span>
                     @endif

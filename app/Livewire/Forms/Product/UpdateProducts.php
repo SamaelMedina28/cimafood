@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Forms\Product;
 
+use App\Models\Business;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\Form;
 
@@ -24,7 +27,7 @@ class UpdateProducts extends Form
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'status' => 'required|in:available,unavailable',
-            'business_id' => 'required|exists:businesses,id',
+            'business_id' => ['required', Rule::exists('businesses', 'id')->where('user_id', Auth::id())],
         ];
 
         if ($this->image_path instanceof TemporaryUploadedFile) {
@@ -48,6 +51,7 @@ class UpdateProducts extends Form
         ];
 
         if ($this->image_path instanceof TemporaryUploadedFile) {
+            Business::deleteImage($product->image_path);
             $dataToUpdate['image_path'] = $this->image_path->store('product/images', 'public');
         }
 

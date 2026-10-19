@@ -17,6 +17,7 @@ class Edit extends Component
 
     public function mount($product)
     {
+        $this->authorize('manage', $product);
         $this->product = $product;
         $this->businesses = Auth::user()->businesses;
         $this->form->setForm($product);
@@ -24,6 +25,7 @@ class Edit extends Component
 
     public function update()
     {
+        $this->authorize('manage', $this->product);
         $this->form->update($this->product);
         $this->redirect(route('product.index'), navigate: true);
     }

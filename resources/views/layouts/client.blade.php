@@ -158,6 +158,8 @@
                                 </div>
                                 <p x-show="groupedCart.length > 1" class="mt-1 text-xs text-gray-500"
                                     x-text="'Se creará un pedido para cada uno de los ' + groupedCart.length + ' negocios.'"></p>
+                                <p x-show="checkoutError" x-text="checkoutError" role="alert"
+                                    class="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700"></p>
                                 <button @click="checkout()" :disabled="isCheckingOut"
                                     class="mt-4 w-full flex items-center justify-center gap-2 rounded-full bg-green-600 px-6 py-3.5 text-base font-semibold text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                                     <span x-show="!isCheckingOut">Realizar pedido</span>
@@ -218,6 +220,7 @@
                 cart: [],
                 storageKey: 'cimafood_global_cart',
                 isCheckingOut: false,
+                checkoutError: '',
                 checkoutUrl: '{{ route('store.checkout') }}',
                 csrfToken: '{{ csrf_token() }}',
 
@@ -326,58 +329,46 @@
                  * Checkout: crea un pedido por cada negocio en el carrito.
                  * Hace las solicitudes en paralelo con Promise.all.
                  */
+                /**
+                 * Checkout: envía el carrito completo en una sola petición.
+                 * El servidor crea un pedido por negocio dentro de una transacción,
+                 * así que o se crean todos o ninguno (no hay pedidos duplicados al reintentar).
+                 */
                 async checkout() {
                     if (this.cart.length === 0 || this.isCheckingOut) return;
                     this.isCheckingOut = true;
-
-                    const groups = this.groupedCart;
+                    this.checkoutError = '';
 
                     try {
-                        const requests = groups.map(group => {
-                            return fetch(this.checkoutUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': this.csrfToken,
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    business_id: group.businessId,
-                                    items: group.items.map(item => ({
-                                        id: item.id,
-                                        quantity: item.quantity
-                                    }))
-                                })
-                            });
+                        const response = await fetch(this.checkoutUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': this.csrfToken,
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                items: this.cart.map(item => ({
+                                    id: item.id,
+                                    quantity: item.quantity
+                                }))
+                            })
                         });
 
-                        const responses = await Promise.all(requests);
-
-                        const allOk = responses.every(r => r.ok);
-
-                        if (allOk) {
-                            const count = groups.length;
-                            alert(
-                                `¡Pedido realizado con éxito! Se crearon ${count} pedido${count > 1 ? 's' : ''} (uno por negocio).`
-                                );
+                        if (response.ok) {
                             this.cart = [];
                             this.saveCart();
-                            this.$dispatch('close-cart');
-                            // Redirigir a pedidos
                             window.location.href = '{{ route('store.orders') }}';
-                        } else {
-                            // Buscar el primer error
-                            for (const response of responses) {
-                                if (!response.ok) {
-                                    const errorData = await response.json();
-                                    alert(errorData.error || 'Hubo un error al procesar uno de los pedidos.');
-                                    break;
-                                }
-                            }
+                            return;
                         }
+
+                        const data = await response.json().catch(() => ({}));
+                        this.checkoutError = data.errors ?
+                            Object.values(data.errors).flat().join(' ') :
+                            'No se pudo enviar el pedido. Intenta de nuevo en un momento.';
                     } catch (error) {
                         console.error(error);
-                        alert('Error de conexión. Intenta nuevamente.');
+                        this.checkoutError = 'No hay conexión. Revisa tu internet e intenta de nuevo.';
                     } finally {
                         this.isCheckingOut = false;
                     }

@@ -4,7 +4,6 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Client\BusinessController as ClientBusinessController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\FavoriteController as ClientFavoriteController;
@@ -26,9 +25,10 @@ Route::middleware([
 
   // Admin - Solo vendors pueden acceder
   Route::middleware('is_vendor')->group(function () {
-    Route::resource('/business', BusinessController::class);
-    Route::resource('/product', ProductController::class);
-    Route::resource('/order', OrderController::class);
+    // Crear, editar y borrar se hace desde componentes Livewire
+    Route::resource('/business', BusinessController::class)->only(['index', 'create', 'show', 'edit']);
+    Route::resource('/product', ProductController::class)->only(['index', 'create', 'show', 'edit']);
+    Route::get('/order', [OrderController::class, 'index'])->name('order.index');
   });
 
   // Cliente
@@ -41,6 +41,7 @@ Route::middleware([
     Route::get('/business/{business}', [ClientBusinessController::class, 'show'])->name('store.business');
     //Productos
     Route::get('/products', [ClientProductController::class, 'index'])->name('store.products');
+    Route::get('/product/{product}', [ClientProductController::class, 'show'])->name('store.product');
 
     //Favoritos
     Route::get('/favorites', [ClientFavoriteController::class, 'index'])->name('store.favorites');
@@ -50,5 +51,6 @@ Route::middleware([
     //Pedidos
     Route::post('/checkout', [ClientOrderController::class, 'store'])->name('store.checkout');
     Route::get('/orders', [ClientOrderController::class, 'index'])->name('store.orders');
+    Route::post('/orders/{order}/cancel', [ClientOrderController::class, 'cancel'])->name('store.orders.cancel');
   });
 });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Business extends Model
 {
@@ -52,6 +53,18 @@ class Business extends Model
         return $this->reviews()->count();
     }
 
+    // Solo quien ya recibió un pedido del negocio puede reseñarlo, y una sola vez
+    public function canBeReviewedBy(User $user): bool
+    {
+        return $this->orders()->where('user_id', $user->id)->where('status', 'completed')->exists()
+            && !$this->reviews()->where('user_id', $user->id)->exists();
+    }
+
+    public function refreshRating(): void
+    {
+        $this->update(['rating' => round($this->reviews()->avg('rating') ?? 0, 2)]);
+    }
+
     public function getLogoUrlAttribute()
     {
         return self::imageUrl($this->logo);
@@ -74,6 +87,14 @@ class Business extends Model
         }
 
         return $now >= $open || $now <= $close;
+    }
+
+    // Borra una imagen subida al disco público; las URLs externas (seeders) se ignoran
+    public static function deleteImage(?string $path): void
+    {
+        if ($path && !str_starts_with($path, 'http')) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     public static function imageUrl(?string $path): ?string

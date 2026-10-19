@@ -4,7 +4,6 @@ namespace App\Livewire\Forms\Business;
 
 use \Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use App\Models\Business;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -53,14 +52,15 @@ class UpdateBusiness extends Form
             'open_time' => $this->open_time,
             'close_time' => $this->close_time,
             'status' => $this->status,
-            'user_id' => Auth::user()->id,
         ];
 
         if ($this->logo instanceof TemporaryUploadedFile) {
+            Business::deleteImage($business->logo);
             $dataToUpdate['logo'] = $this->logo->store('business/logo', 'public');
         }
 
         if ($this->banner instanceof TemporaryUploadedFile) {
+            Business::deleteImage($business->banner);
             $dataToUpdate['banner'] = $this->banner->store('business/banner', 'public');
         }
 
@@ -74,8 +74,9 @@ class UpdateBusiness extends Form
         $this->phone = $business->phone;
         $this->logo = $business->logo;
         $this->banner = $business->banner;
-        $this->open_time = $business->open_time;
-        $this->close_time = $business->close_time;
+        // La base puede devolver H:i:s; el formulario y la validación usan H:i
+        $this->open_time = substr($business->open_time, 0, 5);
+        $this->close_time = substr($business->close_time, 0, 5);
         $this->status = $business->status;
     }
 }

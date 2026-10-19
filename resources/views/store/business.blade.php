@@ -61,20 +61,20 @@
                     </div>
                 </div>
 
-                @auth
-                    @if ($hasReviewed)
-                        <p class="inline-flex items-center gap-1.5 text-sm text-gray-500">
-                            <x-icon name="check" class="size-4 text-green-600" />
-                            Ya dejaste tu reseña
-                        </p>
-                    @else
-                        <button type="button" @click="window.dispatchEvent(new CustomEvent('open-review-modal'))"
-                            class="inline-flex shrink-0 items-center gap-2 self-start lg:self-auto rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-900 hover:border-gray-300 hover:bg-gray-50 transition-colors">
-                            <x-icon name="pencil" class="size-4" />
-                            Escribir reseña
-                        </button>
-                    @endif
-                @endauth
+                @if ($hasReviewed)
+                    <p class="inline-flex items-center gap-1.5 text-sm text-gray-500">
+                        <x-icon name="check" class="size-4 text-green-600" />
+                        Ya dejaste tu reseña
+                    </p>
+                @elseif ($canReview)
+                    <button type="button" @click="window.dispatchEvent(new CustomEvent('open-review-modal'))"
+                        class="inline-flex shrink-0 items-center gap-2 self-start lg:self-auto rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-900 hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                        <x-icon name="pencil" class="size-4" />
+                        Escribir reseña
+                    </button>
+                @else
+                    <p class="max-w-56 text-sm text-gray-500 lg:text-right">Podrás reseñar este negocio cuando recibas un pedido suyo.</p>
+                @endif
             </div>
         </div>
 
@@ -137,7 +137,9 @@
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.success) {
+                    if (data.errors) {
+                        this.error = Object.values(data.errors).flat()[0];
+                    } else if (data.success) {
                         this.showModal = false;
                         this.rating = 0;
                         this.comment = '';

@@ -3,31 +3,43 @@
 namespace App\Livewire\Forms\Product;
 
 use App\Models\Product;
-use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Form;
 
 class StoreProducts extends Form
 {
-    //
-    #[Validate('required|string|max:255')]
     public $name;
-    #[Validate('required|string|max:255')]
     public $description;
-    #[Validate('required|numeric|min:0')]
     public $price;
-    #[Validate('required|image|max:10240')]
     public $image_path;
-    #[Validate('required|integer|min:0')]
     public $quantity;
-    #[Validate('required|in:available,unavailable')]
     public $status;
-    #[Validate('required|exists:businesses,id')]
     public $business_id;
+
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'image_path' => 'required|image|max:10240',
+            'quantity' => 'required|integer|min:0',
+            'status' => 'required|in:available,unavailable',
+            // Solo se pueden crear productos en negocios propios
+            'business_id' => ['required', Rule::exists('businesses', 'id')->where('user_id', Auth::id())],
+        ];
+    }
 
     public function store()
     {
         $this->validate();
-        Product::create($this->all());
+
+        Product::create([
+            ...$this->except('image_path'),
+            'image_path' => $this->image_path->store('product/images', 'public'),
+        ]);
+
         $this->reset();
     }
 }

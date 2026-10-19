@@ -56,6 +56,9 @@
 
                 {{-- Cambiar estado --}}
                 <div x-data="{ confirmCancel: false }">
+                    @error('status')
+                        <p class="mb-3 rounded-xl bg-red-50 p-3 text-red-700">{{ $message }}</p>
+                    @enderror
                     @if ($selectedOrder->status !== 'cancelled')
                         <h4 class="font-medium text-gray-900">Estado del pedido</h4>
                         <div class="mt-2 grid grid-cols-3 gap-2" x-show="!confirmCancel">

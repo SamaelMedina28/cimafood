@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Product;
 
-use App\Models\Product;
 use App\Models\Business;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use PDO;
 
 class Index extends Component
 {
@@ -32,7 +31,11 @@ class Index extends Component
     public function delete()
     {
         if ($this->productId) {
-            Product::find($this->productId)?->delete();
+            $product = Product::findOrFail($this->productId);
+            $this->authorize('manage', $product);
+
+            Business::deleteImage($product->image_path);
+            $product->delete();
             $this->isOpen = false;
             $this->reset('productId');
         }

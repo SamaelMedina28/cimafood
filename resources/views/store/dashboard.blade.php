@@ -7,13 +7,13 @@
         $slides = [
             [
                 'image' => 'promotionals/Hamburgesa.png',
-                'title' => '20% de descuento en tu primer pedido',
-                'text' => 'Usa el código BIENVENIDO al pagar.',
+                'title' => 'Varios negocios, un solo carrito',
+                'text' => 'Cada negocio recibe su parte del pedido por separado.',
             ],
             [
                 'image' => 'promotionals/Tacos.png',
-                'title' => 'Combos desde $45',
-                'text' => 'Disponibles todo el día en los negocios del campus.',
+                'title' => 'Tacos, burritos y más',
+                'text' => 'De los negocios del campus, listos para pedir.',
             ],
             [
                 'image' => 'promotionals/Bobbas.png',
@@ -55,7 +55,7 @@
                         <div class="absolute inset-y-0 left-0 flex max-w-[58%] sm:max-w-md flex-col justify-end sm:justify-center p-5 sm:p-10">
                             <h2 class="font-display text-xl sm:text-4xl font-extrabold leading-tight text-white">
                                 {{ $slide['title'] }}</h2>
-                            <p class="mt-2 hidden sm:block text-base text-white/85">{{ $slide['text'] }}</p>
+                            <p class="mt-2 text-sm sm:text-base text-white/85 line-clamp-2">{{ $slide['text'] }}</p>
                         </div>
                     </div>
                 @endforeach

@@ -54,15 +54,32 @@
                             @endforeach
                         </ul>
 
-                        @if ($order->business)
-                            <div class="mt-4 flex justify-end">
-                                <a href="{{ route('store.business', $order->business->id) }}" wire:navigate
+                        <div class="mt-4 flex flex-wrap items-center justify-end gap-2" x-data="{ confirming: false }">
+                            @can('cancel', $order)
+                                <template x-if="!confirming">
+                                    <button type="button" @click="confirming = true"
+                                        class="rounded-full px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
+                                        Cancelar pedido
+                                    </button>
+                                </template>
+                                <form x-show="confirming" x-cloak method="POST" action="{{ route('store.orders.cancel', $order) }}"
+                                    class="flex flex-wrap items-center justify-end gap-2">
+                                    @csrf
+                                    <span class="text-sm text-gray-600">¿Cancelar este pedido?</span>
+                                    <button type="button" @click="confirming = false"
+                                        class="rounded-full px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100">No</button>
+                                    <button type="submit"
+                                        class="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Sí, cancelar</button>
+                                </form>
+                            @endcan
+                            @if ($order->business?->status === 'active')
+                                <a href="{{ route('store.business', $order->business->id) }}" wire:navigate x-show="!confirming"
                                     class="inline-flex items-center gap-1 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-900 hover:border-gray-300 hover:bg-gray-50 transition-colors">
                                     Ir al negocio
                                     <x-icon name="chevron-right" class="size-4" />
                                 </a>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </article>
                 @endforeach
             </div>
