@@ -10,7 +10,7 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:600,700,800|figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -19,12 +19,12 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-white text-gray-900">
     <x-banner />
     <x-toast />
 
     {{-- Todo el body vive dentro del scope del carrito global --}}
-    <div class="min-h-screen bg-gray-100" x-data="globalCart()" x-init="initCart()"
+    <div class="min-h-screen bg-white pb-20 sm:pb-0" x-data="globalCart()" x-init="initCart()"
         @add-to-cart.window="addToCart($event.detail)">
 
         {{-- Nav de Livewire --}}
@@ -32,10 +32,8 @@
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
+            <header class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+                {{ $header }}
             </header>
         @endif
 
@@ -48,161 +46,165 @@
         {{-- CART DRAWER GLOBAL (agrupado por negocio)                    --}}
         {{-- ============================================================ --}}
         <div x-data="{ open: false }" @open-cart.window="open = true" @close-cart.window="open = false"
-            class="relative z-50" role="dialog" aria-modal="true" x-show="open" style="display: none;">
+            @keydown.escape.window="open = false" class="relative z-50" role="dialog" aria-modal="true"
+            aria-labelledby="cart-title" x-show="open" style="display: none;">
             {{-- Overlay --}}
-            <div x-show="open" x-transition:enter="ease-in-out duration-300" x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-300"
+            <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="open = false"></div>
+                class="fixed inset-0 bg-gray-900/40" @click="open = false"></div>
 
-            <div class="fixed inset-0 overflow-hidden pointer-events-none">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-                        <div x-show="open" x-transition:enter="transform transition ease-in-out duration-500"
-                            x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
-                            x-transition:leave="transform transition ease-in-out duration-500"
-                            x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                            class="pointer-events-auto w-screen max-w-md">
-                            <div class="flex h-full flex-col bg-white shadow-xl">
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full sm:pl-16">
+                <div x-show="open" x-transition:enter="transform transition ease-out duration-300"
+                    x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in duration-200"
+                    x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+                    class="pointer-events-auto w-screen max-w-md">
+                    <div class="flex h-full flex-col bg-white shadow-2xl">
 
-                                {{-- Header --}}
-                                <div
-                                    class="flex items-center justify-between px-4 py-6 sm:px-6 bg-gray-50 border-b border-gray-200">
-                                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                                        Tu Carrito
-                                        <span x-show="totalItems > 0" class="text-sm font-normal text-gray-500"
-                                            x-text="'(' + totalItems + ' producto' + (totalItems > 1 ? 's' : '') + ')'"></span>
-                                    </h2>
-                                    <button type="button" @click="open = false"
-                                        class="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
-                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
+                        {{-- Header --}}
+                        <div class="flex items-center justify-between px-5 sm:px-6 h-16 border-b border-gray-100">
+                            <h2 id="cart-title" class="font-display text-xl font-bold text-gray-900">
+                                Tu carrito
+                                <span x-show="totalItems > 0" class="ml-1 font-sans text-sm font-normal text-gray-500"
+                                    x-text="totalItems + ' producto' + (totalItems > 1 ? 's' : '')"></span>
+                            </h2>
+                            <button type="button" @click="open = false" aria-label="Cerrar carrito"
+                                class="-mr-2 p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                                <x-icon name="x" />
+                            </button>
+                        </div>
+
+                        {{-- Contenido --}}
+                        <div class="flex-1 overflow-y-auto">
+
+                            {{-- Carrito vacío --}}
+                            <template x-if="cart.length === 0">
+                                <div class="flex h-full flex-col items-center justify-center px-8 text-center">
+                                    <div class="mb-5 flex size-16 items-center justify-center rounded-full bg-green-50 text-green-700">
+                                        <x-icon name="bag" class="size-7" />
+                                    </div>
+                                    <p class="font-display text-lg font-bold text-gray-900">Tu carrito está vacío</p>
+                                    <p class="mt-1 text-sm text-gray-500">Puedes agregar productos de varios negocios a la vez.</p>
+                                    <button @click="open = false"
+                                        class="mt-6 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-900 hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                                        Seguir explorando
                                     </button>
                                 </div>
+                            </template>
 
-                                {{-- Contenido --}}
-                                <div class="flex-1 overflow-y-auto">
-
-                                    {{-- Carrito vacío --}}
-                                    <template x-if="cart.length === 0">
-                                        <div
-                                            class="flex flex-col items-center justify-center h-full py-20 px-6 text-center">
-                                            <div class="text-7xl mb-4">🛒</div>
-                                            <p class="text-lg font-semibold text-gray-700">Tu carrito está vacío</p>
-                                            <p class="text-sm text-gray-500 mt-1">Agrega productos de cualquier negocio
-                                            </p>
-                                            <button @click="open = false"
-                                                class="mt-6 text-green-600 font-semibold hover:text-green-700 text-sm">
-                                                Explorar tiendas →
-                                            </button>
-                                        </div>
-                                    </template>
-
-                                    {{-- Items agrupados por negocio --}}
-                                    <template x-if="cart.length > 0">
-                                        <div class="px-4 py-4 sm:px-6 space-y-6">
-                                            <template x-for="group in groupedCart" :key="group.businessId">
-                                                <div class="border border-gray-200 rounded-2xl overflow-hidden">
-                                                    {{-- Cabecera del negocio --}}
-                                                    <div
-                                                        class="bg-green-50 px-4 py-3 flex items-center gap-2 border-b border-green-100">
-                                                        <span class="text-green-600 text-lg">🏪</span>
-                                                        <span class="font-bold text-green-800 text-sm"
-                                                            x-text="group.businessName"></span>
-                                                    </div>
-                                                    {{-- Productos del negocio --}}
-                                                    <ul class="divide-y divide-gray-100 bg-white">
-                                                        <template x-for="(item, idx) in group.items"
-                                                            :key="item.id">
-                                                            <li class="flex py-4 px-4 gap-3">
-                                                                <div
-                                                                    class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center">
-                                                                    <template x-if="item.image">
-                                                                        <img :src="item.image"
-                                                                            :alt="item.name"
-                                                                            class="h-full w-full object-cover">
-                                                                    </template>
-                                                                    <template x-if="!item.image">
-                                                                        <span class="text-2xl">🍲</span>
-                                                                    </template>
+                            {{-- Items agrupados por negocio --}}
+                            <template x-if="cart.length > 0">
+                                <div class="px-5 sm:px-6 divide-y divide-gray-100">
+                                    <template x-for="group in groupedCart" :key="group.businessId">
+                                        <section class="py-5">
+                                            <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                                                <x-icon name="store" class="size-4 text-green-700" />
+                                                <span x-text="group.businessName"></span>
+                                            </h3>
+                                            <ul class="mt-3 space-y-4">
+                                                <template x-for="(item, idx) in group.items" :key="item.id">
+                                                    <li class="flex gap-3">
+                                                        <div class="size-16 shrink-0 overflow-hidden rounded-xl bg-gray-100 flex items-center justify-center text-gray-300">
+                                                            <template x-if="item.image">
+                                                                <img :src="item.image" :alt="item.name" class="size-full object-cover">
+                                                            </template>
+                                                            <template x-if="!item.image">
+                                                                <x-icon name="photo" class="size-6" />
+                                                            </template>
+                                                        </div>
+                                                        <div class="flex min-w-0 flex-1 flex-col justify-between">
+                                                            <div class="flex justify-between gap-3 text-sm">
+                                                                <span x-text="item.name" class="font-medium text-gray-900 leading-snug"></span>
+                                                                <span class="font-semibold text-gray-900 tabular-nums whitespace-nowrap"
+                                                                    x-text="'$' + (item.price * item.quantity).toFixed(2)"></span>
+                                                            </div>
+                                                            <div class="flex items-center justify-between">
+                                                                <div class="inline-flex items-center rounded-full border border-gray-200">
+                                                                    <button type="button" aria-label="Quitar uno"
+                                                                        @click="updateQuantityByIndex(item.cartIndex, item.quantity - 1)"
+                                                                        class="p-1.5 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-50">
+                                                                        <x-icon name="minus" class="size-4" />
+                                                                    </button>
+                                                                    <span class="w-7 text-center text-sm font-semibold tabular-nums" x-text="item.quantity"></span>
+                                                                    <button type="button" aria-label="Agregar uno"
+                                                                        @click="updateQuantityByIndex(item.cartIndex, item.quantity + 1)"
+                                                                        class="p-1.5 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-50">
+                                                                        <x-icon name="plus" class="size-4" />
+                                                                    </button>
                                                                 </div>
-                                                                <div class="flex flex-1 flex-col gap-2">
-                                                                    <div
-                                                                        class="flex justify-between text-sm font-medium text-gray-900">
-                                                                        <span x-text="item.name"
-                                                                            class="leading-tight"></span>
-                                                                        <span
-                                                                            class="ml-4 font-bold text-green-600 whitespace-nowrap"
-                                                                            x-text="'$' + (item.price * item.quantity).toFixed(2)"></span>
-                                                                    </div>
-                                                                    <div class="flex items-center justify-between">
-                                                                        <div
-                                                                            class="flex items-center border border-gray-200 rounded-lg overflow-hidden text-sm">
-                                                                            <button
-                                                                                @click="updateQuantityByIndex(item.cartIndex, item.quantity - 1)"
-                                                                                class="px-2.5 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold transition-colors">−</button>
-                                                                            <span
-                                                                                class="px-3 py-1 font-semibold text-gray-900"
-                                                                                x-text="item.quantity"></span>
-                                                                            <button
-                                                                                @click="updateQuantityByIndex(item.cartIndex, item.quantity + 1)"
-                                                                                class="px-2.5 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold transition-colors">+</button>
-                                                                        </div>
-                                                                        <button type="button"
-                                                                            @click="removeFromCartByIndex(item.cartIndex)"
-                                                                            class="text-xs font-medium text-red-500 hover:text-red-700 transition-colors">
-                                                                            Eliminar
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </template>
-                                                    </ul>
-                                                </div>
-                                            </template>
-                                        </div>
+                                                                <button type="button" @click="removeFromCartByIndex(item.cartIndex)"
+                                                                    class="text-sm text-gray-500 hover:text-red-600 transition-colors">
+                                                                    Quitar
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </template>
+                                            </ul>
+                                        </section>
                                     </template>
                                 </div>
-
-                                {{-- Footer con total y checkout --}}
-                                <template x-if="cart.length > 0">
-                                    <div class="border-t border-gray-200 px-4 py-5 sm:px-6 bg-white">
-                                        <div class="space-y-2 mb-4">
-                                            <div class="flex justify-between text-sm text-gray-600">
-                                                <span x-text="'Negocios (' + groupedCart.length + ')'"></span>
-                                                <span class="text-xs text-gray-400">Se crearán pedidos separados</span>
-                                            </div>
-                                            <div class="flex justify-between text-base font-bold text-gray-900">
-                                                <span>Total</span>
-                                                <span x-text="'$' + totalPrice.toFixed(2)"
-                                                    class="text-green-600"></span>
-                                            </div>
-                                        </div>
-                                        <button @click="checkout()" :disabled="isCheckingOut"
-                                            class="w-full flex items-center justify-center rounded-xl bg-green-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <span x-show="!isCheckingOut">Realizar pedido</span>
-                                            <span x-show="isCheckingOut" class="flex items-center gap-2">
-                                                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                        stroke="currentColor" stroke-width="4"></circle>
-                                                    <path class="opacity-75" fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 14.627 0 12 8z"></path>
-                                                </svg>
-                                                Procesando...
-                                            </span>
-                                        </button>
-                                    </div>
-                                </template>
-
-                            </div>
+                            </template>
                         </div>
+
+                        {{-- Footer con total y checkout --}}
+                        <template x-if="cart.length > 0">
+                            <div class="border-t border-gray-100 px-5 sm:px-6 py-5">
+                                <div class="flex items-baseline justify-between">
+                                    <span class="text-sm text-gray-600">Total</span>
+                                    <span x-text="'$' + totalPrice.toFixed(2)"
+                                        class="font-display text-2xl font-bold text-gray-900 tabular-nums"></span>
+                                </div>
+                                <p x-show="groupedCart.length > 1" class="mt-1 text-xs text-gray-500"
+                                    x-text="'Se creará un pedido para cada uno de los ' + groupedCart.length + ' negocios.'"></p>
+                                <button @click="checkout()" :disabled="isCheckingOut"
+                                    class="mt-4 w-full flex items-center justify-center gap-2 rounded-full bg-green-600 px-6 py-3.5 text-base font-semibold text-white hover:bg-green-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                                    <span x-show="!isCheckingOut">Realizar pedido</span>
+                                    <span x-show="isCheckingOut" class="flex items-center gap-2">
+                                        <svg class="animate-spin size-4" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        Enviando pedido
+                                    </span>
+                                </button>
+                            </div>
+                        </template>
+
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Barra de pestañas inferior (móvil) --}}
+        @php
+            $tabs = [
+                ['label' => 'Inicio', 'icon' => 'home', 'route' => 'store', 'active' => request()->routeIs('store')],
+                ['label' => 'Negocios', 'icon' => 'store', 'route' => 'store.businesses', 'active' => request()->routeIs('store.business*')],
+                ['label' => 'Favoritos', 'icon' => 'heart', 'route' => 'store.favorites', 'active' => request()->routeIs('store.favorites*')],
+                ['label' => 'Pedidos', 'icon' => 'receipt', 'route' => 'store.orders', 'active' => request()->routeIs('store.orders*')],
+            ];
+        @endphp
+        <nav class="sm:hidden fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+            aria-label="Navegación principal">
+            <ul class="grid grid-cols-4">
+                @foreach ($tabs as $tab)
+                    <li>
+                        <a href="{{ route($tab['route']) }}" wire:navigate
+                            @if ($tab['active']) aria-current="page" @endif
+                            @class([
+                                'flex flex-col items-center gap-1 pt-2.5 pb-2 text-[11px] font-medium transition-colors',
+                                'text-green-700' => $tab['active'],
+                                'text-gray-500 hover:text-gray-900' => !$tab['active'],
+                            ])>
+                            <x-icon :name="$tab['icon']" class="size-6" />
+                            {{ $tab['label'] }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </nav>
 
     </div>{{-- /globalCart scope --}}
 

@@ -29,4 +29,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class, 'order_product')->withPivot('quantity', 'price_unit', 'subtotal');
     }
+
+    public function getImageUrlAttribute()
+    {
+        return Business::imageUrl($this->image_path);
+    }
 }

@@ -293,7 +293,7 @@
 
         {{-- Modal confirm cancelación --}}
         <div x-show="confirmCancel" x-transition class="mt-3 p-3 border border-red-200 bg-red-50 rounded-lg">
-            <p class="text-xs text-red-700 font-medium mb-3">⚠️ ¿Seguro que deseas cancelar este pedido? Esta acción restaurará el stock pero no se puede deshacer.</p>
+            <p class="flex items-start gap-1.5 text-xs text-red-700 font-medium mb-3"><x-icon name="warning" class="size-4 shrink-0" />¿Seguro que deseas cancelar este pedido? Esta acción restaurará el stock pero no se puede deshacer.</p>
             <div class="flex gap-2">
                 <button
                     wire:click="updateStatus({{ $selectedOrder->id }}, 'cancelled')"
@@ -312,7 +312,7 @@
     @else
         {{-- Pedido cancelado --}}
         <div class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <span class="text-red-500 text-lg">✕</span>
+            <x-icon name="x" class="size-4 shrink-0 text-red-500" />
             <p class="text-xs font-semibold text-red-700">Este pedido fue cancelado y no puede modificarse.</p>
         </div>
     @endif

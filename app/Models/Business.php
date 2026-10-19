@@ -51,4 +51,37 @@ class Business extends Model
     {
         return $this->reviews()->count();
     }
+
+    public function getLogoUrlAttribute()
+    {
+        return self::imageUrl($this->logo);
+    }
+
+    public function getBannerUrlAttribute()
+    {
+        return self::imageUrl($this->banner);
+    }
+
+    // Considera horarios que cruzan la medianoche (ej. 18:00 - 02:00)
+    public function isOpen(): bool
+    {
+        $now = now()->format('H:i');
+        $open = substr($this->open_time, 0, 5);
+        $close = substr($this->close_time, 0, 5);
+
+        if ($open <= $close) {
+            return $now >= $open && $now <= $close;
+        }
+
+        return $now >= $open || $now <= $close;
+    }
+
+    public static function imageUrl(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        return str_starts_with($path, 'http') ? $path : asset('storage/' . $path);
+    }
 }
