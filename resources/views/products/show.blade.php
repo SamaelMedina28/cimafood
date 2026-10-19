@@ -1,136 +1,70 @@
 <x-app-layout>
+    @php $available = $product->status === 'available'; @endphp
+
     <x-slot name="header">
-        <div class="flex items-center gap-2">
-            <a href="{{ route('product.index') }}" wire:navigate
-                class="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 bg-white rounded-full">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Volver
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight truncate">
-                {{ $product->name }}
-            </h2>
-        </div>
-    </x-slot>
-    <div>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex justify-end my-5">
-                {{-- Editar --}}
+        <x-admin.header :title="$product->name" :description="$product->business?->name"
+            :back="route('product.index')" back-label="Productos">
+            <x-slot name="actions">
                 <a href="{{ route('product.edit', $product) }}" wire:navigate
-                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-yellow-500 rounded-full shadow-sm hover:bg-yellow-600 active:bg-yellow-700 transition-all duration-150">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Editar producto
+                    class="inline-flex items-center gap-1.5 rounded-full bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-colors">
+                    <x-icon name="pencil" class="size-4" />
+                    Editar
                 </a>
+            </x-slot>
+        </x-admin.header>
+    </x-slot>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="aspect-square overflow-hidden rounded-3xl bg-gray-100">
+                @if ($product->image_url)
+                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="size-full object-cover">
+                @else
+                    <div class="flex size-full items-center justify-center text-gray-300"><x-icon name="photo" class="size-12" /></div>
+                @endif
             </div>
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="p-6 sm:p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {{-- Imagen --}}
-                        <div
-                            class="flex items-center justify-center bg-gray-50 rounded-lg border border-gray-100 overflow-hidden min-h-[300px]">
-                            @if ($product->image_path)
-                                <img src="{{ str_starts_with($product->image_path, 'http') ? $product->image_path : asset('storage/' . $product->image_path) }}"
-                                    class="w-full h-full object-cover">
-                            @else
-                                <svg class="w-24 h-24 text-gray-300" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
-                            @endif
-                        </div>
 
-                        {{-- Detalles --}}
-                        <div class="flex flex-col">
-                            <div class="mb-6">
-                                <h3 class="text-3xl font-bold text-gray-900 mb-2">{{ $product->name }}</h3>
-                                <p class="text-4xl font-bold text-emerald-600">${{ number_format($product->price, 2) }}
-                                </p>
-                            </div>
+            <div>
+                <p class="font-display text-4xl font-bold text-gray-900 tabular-nums">${{ number_format($product->price, 2) }}</p>
+                <p class="mt-4 text-lg text-gray-600">{{ $product->description ?: 'Sin descripción.' }}</p>
 
-                            <div class="space-y-6 flex-1">
-                                <div>
-                                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                        Descripción</h4>
-                                    <p class="text-gray-700 leading-relaxed text-lg">
-                                        {{ $product->description ?: 'No hay descripción disponible para este producto.' }}
-                                    </p>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-6 pt-6 border-t border-gray-100">
-                                    <div>
-                                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Estado
-                                        </h4>
-                                        @if (isset($product->status) && $product->status === 'available')
-                                            <span
-                                                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
-                                                Disponible
-                                            </span>
-                                        @elseif(isset($product->status) && $product->status !== 'available')
-                                            <span
-                                                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-gray-50 text-gray-600 border border-gray-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-2"></span>
-                                                No disponible
-                                            </span>
-                                        @else
-                                            <span class="text-sm font-medium text-gray-900">No especificado</span>
-                                        @endif
-                                    </div>
-
-                                    <div>
-                                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                            Inventario</h4>
-                                        <p class="text-gray-900 font-medium text-lg flex items-center">
-                                            @if ($product->quantity !== null)
-                                                <svg class="w-5 h-5 mr-2 text-emerald-500" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
-                                                    </path>
-                                                </svg>
-                                                {{ $product->quantity }} <span
-                                                    class="text-gray-500 text-sm ml-1">unidades</span>
-                                            @else
-                                                <span class="text-gray-500">No especificado</span>
-                                            @endif
-                                        </p>
-                                    </div>
-
-                                    <div class="col-span-2">
-                                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                            Negocio Asociado</h4>
-                                        <div class="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                            @if ($product->business)
-                                                <div
-                                                    class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-3 shadow-sm">
-                                                    <svg class="w-5 h-5 text-gray-500" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="1.5"
-                                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                                        </path>
-                                                    </svg>
-                                                </div>
-                                                <span
-                                                    class="text-gray-900 font-medium text-base">{{ $product->business->name }}</span>
-                                            @else
-                                                <span class="text-gray-500">No asignado</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <dl class="mt-8 grid grid-cols-2 gap-6 border-t border-gray-100 pt-6">
+                    <div>
+                        <dt class="text-sm text-gray-500">Disponibilidad</dt>
+                        <dd class="mt-1">
+                            <span @class([
+                                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 ring-inset',
+                                'bg-green-50 text-green-800 ring-green-200' => $available,
+                                'bg-gray-100 text-gray-600 ring-gray-200' => !$available,
+                            ])>
+                                <span @class(['size-1.5 rounded-full', 'bg-green-600' => $available, 'bg-gray-400' => !$available])></span>
+                                {{ $available ? 'Disponible' : 'No disponible' }}
+                            </span>
+                        </dd>
                     </div>
-                </div>
+                    <div>
+                        <dt class="text-sm text-gray-500">Stock</dt>
+                        <dd @class(['mt-1 font-display text-2xl font-bold tabular-nums', 'text-red-600' => $product->quantity <= 0, 'text-gray-900' => $product->quantity > 0])>
+                            {{ $product->quantity <= 0 ? 'Agotado' : $product->quantity . ' unidades' }}
+                        </dd>
+                    </div>
+                    @if ($product->business)
+                        <div class="col-span-2">
+                            <dt class="text-sm text-gray-500">Negocio</dt>
+                            <dd class="mt-2">
+                                <a href="{{ route('business.show', $product->business) }}" wire:navigate
+                                    class="inline-flex items-center gap-3 rounded-full border border-gray-200 py-1.5 pl-1.5 pr-4 hover:border-gray-300 hover:bg-gray-50">
+                                    <span class="size-8 overflow-hidden rounded-full bg-green-50">
+                                        @if ($product->business->logo_url)
+                                            <img src="{{ $product->business->logo_url }}" alt="" class="size-full object-cover">
+                                        @endif
+                                    </span>
+                                    <span class="font-medium text-gray-900">{{ $product->business->name }}</span>
+                                </a>
+                            </dd>
+                        </div>
+                    @endif
+                </dl>
             </div>
         </div>
     </div>

@@ -49,13 +49,13 @@
                                     'terms_of_service' =>
                                         '<a target="_blank" href="' .
                                         route('terms.show') .
-                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">' .
+                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600">' .
                                         __('Terms of Service') .
                                         '</a>',
                                     'privacy_policy' =>
                                         '<a target="_blank" href="' .
                                         route('policy.show') .
-                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">' .
+                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600">' .
                                         __('Privacy Policy') .
                                         '</a>',
                                 ]) !!}
@@ -71,19 +71,19 @@
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="is_vendor" value="0"
                             {{ old('is_vendor', '0') === '0' ? 'checked' : '' }}
-                            class="rounded border-gray-300 text-indigo-600" />
+                            class="rounded border-gray-300 text-green-700" />
                         <span class="text-sm text-gray-700">{{ __('Customer') }}</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="is_vendor" value="1"
                             {{ old('is_vendor') === '1' ? 'checked' : '' }}
-                            class="rounded border-gray-300 text-indigo-600" />
+                            class="rounded border-gray-300 text-green-700" />
                         <span class="text-sm text-gray-700">{{ __('Vendor') }}</span>
                     </label>
                 </div>
             </div>
             <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
                     href="{{ route('login') }}">
                     {{ __('Already registered?') }}
                 </a>

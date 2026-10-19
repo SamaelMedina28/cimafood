@@ -48,21 +48,23 @@ class DashboardController extends Controller
 
         $businessIds = $user->businesses()->pluck('id');
 
+        // Los pedidos cancelados no cuentan como venta
+        $salesQuery = fn() => Order::whereIn('business_id', $businessIds)
+            ->where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate]);
+
         // Total Sales
-        $totalSales = Order::whereIn('business_id', $businessIds)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('total_price');
+        $totalSales = $salesQuery()->sum('total_price');
 
         // Orders Count
-        $ordersCount = Order::whereIn('business_id', $businessIds)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->count();
+        $ordersCount = $salesQuery()->count();
 
         // Top Products
         $topProducts = DB::table('order_product')
             ->join('orders', 'order_product.order_id', '=', 'orders.id')
             ->join('products', 'order_product.product_id', '=', 'products.id')
             ->whereIn('orders.business_id', $businessIds)
+            ->where('orders.status', '!=', 'cancelled')
             ->whereBetween('orders.created_at', [$startDate, $endDate])
             ->select('products.name', DB::raw('SUM(order_product.quantity) as total_quantity'), DB::raw('SUM(order_product.subtotal) as total_revenue'))
             ->groupBy('products.id', 'products.name')
@@ -73,19 +75,15 @@ class DashboardController extends Controller
         // Top Businesses
         $topBusinesses = Business::whereIn('id', $businessIds)
             ->withSum(['orders' => function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
+                $query->where('status', '!=', 'cancelled')
+                    ->whereBetween('created_at', [$startDate, $endDate]);
             }], 'total_price')
             ->orderByDesc('orders_sum_total_price')
             ->limit(5)
             ->get();
 
-        // Sales by day (for a chart)
-        $salesByDay = Order::whereIn('business_id', $businessIds)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total_price) as total'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        // Ventas agrupadas para la gráfica: por hora (hoy), por mes (año) o por día
+        $salesSeries = $this->salesSeries($salesQuery()->get(['created_at', 'total_price']), $period, $startDate, $endDate);
 
         // Recent Orders
         $recentOrders = Order::whereIn('business_id', $businessIds)
@@ -93,6 +91,9 @@ class DashboardController extends Controller
             ->orderByDesc('created_at')
             ->limit(8)
             ->get();
+
+        // Pedidos que esperan atención, sin importar el periodo
+        $pendingCount = Order::whereIn('business_id', $businessIds)->where('status', 'pending')->count();
 
         // Average Order Value
         $avgOrderValue = $ordersCount > 0 ? $totalSales / $ordersCount : 0;
@@ -102,12 +103,42 @@ class DashboardController extends Controller
             'ordersCount',
             'topProducts',
             'topBusinesses',
-            'salesByDay',
+            'salesSeries',
             'recentOrders',
             'avgOrderValue',
+            'pendingCount',
             'period',
             'startDate',
             'endDate'
         ));
+    }
+
+    private function salesSeries($orders, string $period, Carbon $startDate, Carbon $endDate): array
+    {
+        if ($period === 'today') {
+            $buckets = collect(range(0, 23))->mapWithKeys(fn($h) => [sprintf('%02d', $h) => ['label' => sprintf('%02d:00', $h), 'total' => 0]]);
+            $keyFor = fn($date) => $date->format('H');
+        } elseif ($period === 'year') {
+            $buckets = collect(range(1, 12))->mapWithKeys(fn($m) => [sprintf('%02d', $m) => [
+                'label' => ucfirst(Carbon::create(null, $m, 1)->translatedFormat('M')),
+                'total' => 0,
+            ]]);
+            $keyFor = fn($date) => $date->format('m');
+        } else {
+            $buckets = collect();
+            for ($day = $startDate->copy()->startOfDay(); $day <= $endDate; $day->addDay()) {
+                $buckets[$day->format('Y-m-d')] = ['label' => $day->translatedFormat('j M'), 'total' => 0];
+            }
+            $keyFor = fn($date) => $date->format('Y-m-d');
+        }
+
+        foreach ($orders as $order) {
+            $key = $keyFor($order->created_at);
+            if (isset($buckets[$key])) {
+                $buckets[$key] = ['label' => $buckets[$key]['label'], 'total' => $buckets[$key]['total'] + $order->total_price];
+            }
+        }
+
+        return $buckets->values()->all();
     }
 }
