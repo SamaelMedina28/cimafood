@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BusinessController;
+use App\Models\Business;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +13,9 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
-  return view('welcome');
+  $businesses = Business::where('status', 'active')->latest()->limit(6)->get();
+
+  return view('welcome', compact('businesses'));
 });
 
 Route::middleware([

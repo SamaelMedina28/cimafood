@@ -1,97 +1,88 @@
 <x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+    @php
+        $role = old('is_vendor', request('rol') === 'vendedor' ? '1' : '0');
+        $roles = [
+            '0' => ['title' => 'Quiero pedir', 'text' => 'Compra en los negocios del campus.', 'icon' => 'bag'],
+            '1' => ['title' => 'Tengo un negocio', 'text' => 'Publica tu menú y recibe pedidos.', 'icon' => 'store'],
+        ];
+    @endphp
 
-        <x-validation-errors class="mb-4" />
+    <x-authentication-card title="Crea tu cuenta" description="Te toma un minuto." image="example_images/products/burritos/img3.jpg">
+        <x-validation-errors class="mb-6" />
 
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" class="space-y-5" x-data="{ role: '{{ $role }}' }">
             @csrf
+
+            <fieldset>
+                <legend class="text-sm font-medium text-gray-900">¿Cómo vas a usar CimaFood?</legend>
+                <div class="mt-2 grid grid-cols-2 gap-3">
+                    @foreach ($roles as $value => $option)
+                        @php $selected = (string) $role === (string) $value; @endphp
+                        <label @class([
+                                'relative cursor-pointer rounded-2xl border p-4 transition-colors focus-within:ring-2 focus-within:ring-green-600',
+                                'border-green-600 bg-green-50' => $selected,
+                                'border-gray-200 hover:border-gray-300' => !$selected,
+                            ])
+                            x-bind:class="{ 'border-green-600 bg-green-50': role === '{{ $value }}', 'border-gray-200 hover:border-gray-300': role !== '{{ $value }}' }">
+                            <input type="radio" name="is_vendor" value="{{ $value }}" x-model="role" @checked($selected) class="sr-only">
+                            <x-icon :name="$option['icon']" class="size-6 text-green-700" />
+                            <span class="mt-3 block font-semibold text-gray-900">{{ $option['title'] }}</span>
+                            <span class="mt-0.5 block text-sm text-gray-500">{{ $option['text'] }}</span>
+                            <span x-show="role === '{{ $value }}'" @unless ($selected) style="display: none;" @endunless
+                                class="absolute top-3 right-3 flex size-5 items-center justify-center rounded-full bg-green-600 text-white">
+                                <x-icon name="check" class="size-3.5" />
+                            </span>
+                        </label>
+                    @endforeach
+                </div>
+            </fieldset>
+
             <div>
-                <x-label for="name" value="{{ __('Name') }}" />
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"
+                <x-label for="name" value="Nombre" />
+                <x-input id="name" class="mt-1.5 block w-full" type="text" name="name" :value="old('name')"
                     required autofocus autocomplete="name" />
             </div>
 
-            <div class="mt-4">
-                <x-label for="phone" value="{{ __('Phone') }}" />
-                <x-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')"
-                    required autofocus autocomplete="phone" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                    <x-label for="email" value="Correo electrónico" />
+                    <x-input id="email" class="mt-1.5 block w-full" type="email" name="email" :value="old('email')"
+                        required autocomplete="username" placeholder="tu@correo.com" />
+                </div>
+                <div>
+                    <x-label for="phone" value="Teléfono" />
+                    <x-input id="phone" class="mt-1.5 block w-full" type="tel" name="phone" :value="old('phone')"
+                        required autocomplete="tel" placeholder="686 123 4567" />
+                </div>
             </div>
 
-            <div class="mt-4">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
-                    required autocomplete="username" />
+            <div>
+                <x-label for="password" value="Contraseña" />
+                <x-password-input id="password" required autocomplete="new-password" />
+                <p class="mt-1.5 text-xs text-gray-500">Mínimo 8 caracteres.</p>
             </div>
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                    autocomplete="new-password" />
-            </div>
-
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                    name="password_confirmation" required autocomplete="new-password" />
+            <div>
+                <x-label for="password_confirmation" value="Repite la contraseña" />
+                <x-password-input id="password_confirmation" required autocomplete="new-password" />
             </div>
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
-                <div class="mt-4">
-                    <x-label for="terms">
-                        <div class="flex items-center">
-                            <x-checkbox name="terms" id="terms" required />
-
-                            <div class="ms-2">
-                                {!! __('I agree to the :terms_of_service and :privacy_policy', [
-                                    'terms_of_service' =>
-                                        '<a target="_blank" href="' .
-                                        route('terms.show') .
-                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600">' .
-                                        __('Terms of Service') .
-                                        '</a>',
-                                    'privacy_policy' =>
-                                        '<a target="_blank" href="' .
-                                        route('policy.show') .
-                                        '" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600">' .
-                                        __('Privacy Policy') .
-                                        '</a>',
-                                ]) !!}
-                            </div>
-                        </div>
-                    </x-label>
-                </div>
+                <label for="terms" class="flex items-start gap-2 text-sm text-gray-600">
+                    <x-checkbox name="terms" id="terms" required class="mt-0.5" />
+                    <span>
+                        Acepto los <a target="_blank" href="{{ route('terms.show') }}" class="font-medium text-gray-900 underline">términos del servicio</a>
+                        y la <a target="_blank" href="{{ route('policy.show') }}" class="font-medium text-gray-900 underline">política de privacidad</a>.
+                    </span>
+                </label>
             @endif
 
-            <div class="mt-4">
-                <x-label value="{{ __('I want to register as:') }}" />
-                <div class="flex items-center gap-6 mt-2">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="is_vendor" value="0"
-                            {{ old('is_vendor', '0') === '0' ? 'checked' : '' }}
-                            class="rounded border-gray-300 text-green-700" />
-                        <span class="text-sm text-gray-700">{{ __('Customer') }}</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="is_vendor" value="1"
-                            {{ old('is_vendor') === '1' ? 'checked' : '' }}
-                            class="rounded border-gray-300 text-green-700" />
-                        <span class="text-sm text-gray-700">{{ __('Vendor') }}</span>
-                    </label>
-                </div>
-            </div>
-            <div class="flex items-center justify-end mt-4">
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                    href="{{ route('login') }}">
-                    {{ __('Already registered?') }}
-                </a>
-
-                <x-button class="ms-4">
-                    {{ __('Register') }}
-                </x-button>
-            </div>
+            <x-button class="w-full py-3 text-base">Crear cuenta</x-button>
         </form>
+
+        <p class="mt-8 text-sm text-gray-600">
+            ¿Ya tienes cuenta?
+            <a href="{{ route('login') }}" class="font-semibold text-green-700 hover:text-green-800">Inicia sesión</a>
+        </p>
     </x-authentication-card>
 </x-guest-layout>

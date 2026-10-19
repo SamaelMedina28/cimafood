@@ -1,34 +1,27 @@
 <x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
-
-        <div class="mb-4 text-sm text-gray-600">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-        </div>
-
+    <x-authentication-card title="Recupera tu contraseña"
+        description="Escribe el correo de tu cuenta y te enviaremos un enlace para crear una nueva.">
         @session('status')
-            <div class="mb-4 font-medium text-sm text-green-600">
-                {{ $value }}
-            </div>
+            <x-auth-status class="mb-6">{{ $value }}</x-auth-status>
         @endsession
 
-        <x-validation-errors class="mb-4" />
+        <x-validation-errors class="mb-6" />
 
-        <form method="POST" action="{{ route('password.email') }}">
+        <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
             @csrf
 
-            <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <div>
+                <x-label for="email" value="Correo electrónico" />
+                <x-input id="email" class="mt-1.5 block w-full" type="email" name="email" :value="old('email')"
+                    required autofocus autocomplete="username" placeholder="tu@correo.com" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-button>
-            </div>
+            <x-button class="w-full py-3 text-base">Enviar enlace</x-button>
         </form>
+
+        <a href="{{ route('login') }}" class="mt-8 inline-flex items-center gap-1 text-sm font-semibold text-green-700 hover:text-green-800">
+            <x-icon name="chevron-left" class="size-4" />
+            Volver a iniciar sesión
+        </a>
     </x-authentication-card>
 </x-guest-layout>

@@ -1,36 +1,30 @@
 <x-guest-layout>
-    <x-authentication-card>
-        <x-slot name="logo">
-            <x-authentication-card-logo />
-        </x-slot>
+    <x-authentication-card title="Crea una nueva contraseña" description="Elige una que no hayas usado antes.">
+        <x-validation-errors class="mb-6" />
 
-        <x-validation-errors class="mb-4" />
-
-        <form method="POST" action="{{ route('password.update') }}">
+        <form method="POST" action="{{ route('password.update') }}" class="space-y-5">
             @csrf
 
             <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-            <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
+            <div>
+                <x-label for="email" value="Correo electrónico" />
+                <x-input id="email" class="mt-1.5 block w-full" type="email" name="email" :value="old('email', $request->email)"
+                    required autocomplete="username" />
             </div>
 
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            <div>
+                <x-label for="password" value="Nueva contraseña" />
+                <x-password-input id="password" required autofocus autocomplete="new-password" />
+                <p class="mt-1.5 text-xs text-gray-500">Mínimo 8 caracteres.</p>
             </div>
 
-            <div class="mt-4">
-                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <div>
+                <x-label for="password_confirmation" value="Repite la contraseña" />
+                <x-password-input id="password_confirmation" required autocomplete="new-password" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-button>
-                    {{ __('Reset Password') }}
-                </x-button>
-            </div>
+            <x-button class="w-full py-3 text-base">Guardar contraseña</x-button>
         </form>
     </x-authentication-card>
 </x-guest-layout>
